@@ -1,0 +1,60 @@
+.draggable-resizable-image:hover {
+    cursor: pointer;
+}
+
+.draggable-resizable-image {
+    align-self: center;
+    float: left;
+}
+
+#editable {
+    padding-bottom: 5rem;
+    overflow: auto;
+    border: 2px solid black;
+}
+
+#dropdown {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+}
+
+#margin-dropdown {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+}
+
+.hidden {
+    display: none;
+}
+
+#margin-slider-top, #margin-slider-bottom, #margin-slider-left, #margin-slider-right {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+}
+
+#margin-slider-bottom {
+    transform: rotate(-90deg)
+}
+
+#margin-slider-top {
+    transform: rotate(90deg);
+}
+
+#resize-button, #move-button, #delete-button {
+    max-width: 200px;
+    font-family: 'Roboto Slab', serif;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    background-color: #4d8b66;
+}
+
+#resize-button:hover, #move-button:hover {
+    background-color: #7ad9a0;
+}

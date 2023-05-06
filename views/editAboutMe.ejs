@@ -1,0 +1,53 @@
+<%-include('partials/header')%>
+
+<div class="container">
+    <h1 class="d-flex justify-content-center">Edit Index Page</h1>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="blogs container-fluid">
+            
+        <form onsubmit="return confirm('Are you sure you want to submit?  Make sure HTML stylings are 100% correct!!!')" action="/aboutMeUpdate?_method=PUT" method="POST" enctype="multipart/form-data">
+
+            <div class="index-images">
+                <% for (let i = 1; i <= aboutMe[0].fileAmount; i++) { %>
+                    <img class="index-image" src="/images/index/banner/<%=i%>.jpeg"
+                    style= "width: calc(100% / <%= aboutMe[0].fileAmount %>)"/>
+                <% } %>
+            </div>
+
+            <div class="row justify-content-center">
+                <label for="index-images">Upload Photos for Banner</label>
+                <input class="form-control-sm chooseFile" type="file" name="bannerImage" multiple required>
+            </div>
+
+            <div class="row justify-content-center">
+
+                <input id="date" type="text" name="newDate" hidden>
+
+                <label for="index-images" class="row">Upload Photos for About Me</label>
+                <input class="form-control-sm chooseFile" type="file" name="aboutMeImage" multiple required>
+
+                <label for="aboutMeUpdate">Edit About Me</label>
+                <div contenteditable="true" class="form-control content-editable" placeholder="Copy and Paste Text from Above" required><%- aboutMe[0].content %> </div>
+                <textarea class="form-control hidden-textarea" name="aboutMeUpdate" hidden></textarea>
+
+            </div>
+
+            <button class="submit-edits">Submit Edits</button>
+
+        </form>
+
+        <div class="about-me-date container-fluid">
+            <% if (aboutMe[0].uploadedAt != aboutMe[0].updatedDate) { %> 
+                <span class="update">Home Page Last Updated On <%= timeConverter(aboutMe[0].updatedDate) %> </span>
+            <% } %> 
+        </div>
+
+    </div>
+</div>
+
+<!--Image + Editing Scripts-->
+<script src="/js/aboutMe.js"></script>
+
+<%- include('partials/footer')%>

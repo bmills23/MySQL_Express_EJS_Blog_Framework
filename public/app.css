@@ -1,0 +1,461 @@
+/*Basics*/
+
+html {
+    height: 100vh;
+}
+
+body {
+    height: auto;
+    width: auto;
+    min-height: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    color: #523113;
+    margin-top: 4rem;
+    font-family: 'Jacques Francois Shadow', cursive;
+}
+
+h2 {
+    color: #523113;
+    font-family: 'Roboto Slab', serif;
+}
+
+a, p, label, input, span {
+    font-family: 'Roboto Slab', serif;
+}
+
+/*Inputs*/
+
+input::file-selector-button {
+    color: #FFF;
+    background-color: #4d8b66;
+    font-family: 'Roboto Slab', serif;
+    font-size: 0.93rem;
+}
+
+input::file-selector-button:hover {
+    cursor: pointer;
+    background-color: #7ad9a0;
+}
+
+/*Nav*/
+
+.nav-link {
+    color: #FFF; 
+    font-family: 'IM Fell Great Primer SC', serif;
+}
+
+.navbar {
+    background-color: #4d8b66;
+}
+
+.user-only {
+    color: orange;
+}
+
+/*Index Page*/
+
+.featured-blogs {
+    padding: 1.5rem;
+    border: 2px double black;
+    margin-top: 1.5rem;
+}
+
+.index-title {
+    color: white;
+    -webkit-text-stroke: 1px black;
+    position: absolute;
+    padding-top: 2rem;
+    padding-left: 1.5rem;
+    z-index: 2;
+}
+
+.index-images {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+}
+
+.index-image {
+    max-height: 200px;
+    margin: 0;
+    object-fit: cover;
+    height: auto;
+    /* Add the -webkit- prefix for Safari compatibility */
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition: all .25s ease-in-out;
+    transition: all .25s ease-in-out;
+}
+
+.index-page {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/*About Me and Blog Content*/
+
+.about-me {
+    background-color: #A6A089;
+    padding: 1.5rem;
+    border: 2px double black;
+    margin-top: 1.5rem;
+}
+
+.about-me-date {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.blog-content, .about-me-content {
+    display: flex;
+    flex-wrap: wrap;
+ }
+
+.blog-post {
+    border: 2px solid seagreen;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.container {
+    height: auto;
+    transition: all 0.5s ease-out;
+}
+
+.blog {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.blog-title {
+    float: left;
+}
+
+.blogs {
+    margin-top: 1.5rem;
+}
+
+#new-blog {
+    color: seagreen;
+}
+
+/*Images*/
+
+.img-fluid {
+    object-fit: cover;
+    height: auto;
+    /* Add the -webkit- prefix for Safari compatibility */
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.gallery {
+    margin: auto;
+}
+
+.gallery-image:hover {
+    cursor: zoom-in;
+}
+
+.row {
+    transition: flex 1s;
+}
+
+.row [class*='col-'] {
+    transition: all 0.5s ease-in;
+}
+
+/*Blogging*/
+
+textarea {
+    border: 1px solid black;
+}
+
+.content-editable {
+    min-width: 100%;
+}
+
+.post-date, .update {
+    width: 100%;
+    display: inline-block;
+    font-family: 'IM Fell Great Primer SC', serif;
+}
+
+#photo-delete, #photo-update {
+    display: inline-block;
+    vertical-align: top;
+    align-items: start;
+}
+
+/*Header Animation*/
+
+@keyframes slideInFromLeft {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+@keyframes slideInFromRight {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  
+@keyframes slideInFromBottom {
+    0% {
+        transform: translateY(100%);
+        filter: blur(10px);
+        -webkit-filter: blur(10px);
+    }
+    100% {
+        transform: translateY(0);
+        filter: blur(0px);
+        -webkit-filter: blur(0px);
+    }
+}
+
+/*Gallery Animation*/
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/*INDEX COVER PHOTO*/
+
+.photo-parent {
+    transition: all 0.5s linear;
+}
+
+/* Gallery Animations */
+
+
+/*Login Animation*/
+
+label {
+    padding: 0.5em;
+    width: 150px;
+}
+
+.header-container {
+    transition: all 0.5s ease-out;
+    overflow: hidden;
+    width: 95%;
+    padding: 0;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.caption-div {
+    margin: 1rem;
+    border: black solid 2px;
+    width: 33%;
+}
+
+.false-caption {
+    border: orange 1px solid;
+    overflow-wrap: break-word;
+    display: block;
+    width: 100%;
+}
+
+@media (max-width: 10000px) {
+    .img-fluid {
+        min-width: 20%;
+    }
+    .header-container {
+        height: 40vh;
+    }
+}
+
+@media (max-width: 1200px) {
+    .img-fluid {
+        min-width: 30%;
+    }
+    .header-container {
+        height: 30vh;
+    }
+}
+
+@media (max-width: 480px) {
+    .img-fluid {
+        min-width: 100%;
+    }
+    .header-container {
+        height: 20vh;
+    }
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    font-size: 1rem;
+}
+
+label {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+p {
+    text-align: justify;
+}
+
+.submit-blog, .delete-post, .submit-edits, .delete, .captions-update, .feature-button {
+    max-width: 200px;
+    font-family: 'Roboto Slab', serif;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    background-color: #4d8b66;
+}
+
+.feature-button, .unfeature-button {
+    float: right;
+}
+
+.unfeature-button, #true-delete {
+    font-family: 'Roboto Slab', serif;
+    margin: 0.5rem;
+    color: #fff;
+    background-color: #8b4d4d;
+}
+
+.unfeature-button:hover {
+    background-color: #da7575;
+}
+
+.feature-photo {
+    object-fit: cover;
+    height: 400px;
+    width: 100%;
+    transition: all 0.5s ease;   
+    overflow: hidden;
+}
+
+.feature-photo:hover {
+    transform: scale(1.1)
+}
+
+.submit-blog:hover, .delete-post:hover, 
+.submit-edits:hover, .feature-button:hover {
+    background-color: #7ad9a0;
+}
+
+/*Photo Upload Stuff*/
+.blogImage {
+    padding: 1rem;
+}
+
+/* Blog Imaging */
+
+.editing-group {
+    border: 2px dashed black;
+}
+
+#preview-header {
+    object-fit: cover;
+    width: 100%;
+    height: 40vh;
+}
+
+.header-image, .blog-image {
+    padding: 0;
+    object-fit: cover;
+    width: 95%;
+    border: 2px dashed black;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.chooseFile {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.photo-form {
+    display: inline-block;
+}
+
+.checkbox {
+    margin: 1rem;
+    transform: scale(1.5);
+}
+
+.caption-title, .caption-description {
+    margin-left: 1rem;
+}
+
+.selected-nav-link {
+    background-color: goldenrod;
+    color: white;
+}
+
+/*Full-Screen image zoom for Gallery*/
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    padding-top: 50px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+    cursor: zoom-out;
+}
+  
+.modal-content {
+    margin: auto;
+    margin-top: 70px;
+    display: block;
+    width: auto;
+    max-width: 80%;
+    max-height: 80%;
+}
+
+.caption {
+    font-family: 'Roboto Slab', serif;
+    color: white;
+    text-align: center;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.row:before, .row:after {
+    display: none !important;
+}
+
+.login {
+    color: white;
+    font-family: 'IM Fell Great Primer SC', serif;
+}
+
+.login:hover {
+    color: #ecececdc;
+}
+
+.navbar-toggler {
+    border-color: white;
+}

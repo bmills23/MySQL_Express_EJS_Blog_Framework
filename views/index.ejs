@@ -1,0 +1,62 @@
+<%- include('partials/header') %> 
+ 
+<div class="title container">
+    <h1 class="d-flex justify-content-center">
+    
+    <% if (!isAuthenticated) { %> 
+
+        <%= "Website Name" %>
+    
+    <% } else { %>
+
+        <!--Can link up to MySQL User Data-->
+
+        <%= "Welcome, User!" %>
+
+    <% } %> 
+    </h1>
+</div>
+
+<div class="index-images">
+    <% for (let i = 1; i <= aboutMe[0].fileAmount; i++) { %>
+        <img class="index-image" src="/images/index/banner/<%=i%>.jpeg"
+        style= "width: calc(100% / <%= aboutMe[0].fileAmount %>)"
+        alt="Banner Image <%=i%>">
+    <% } %>
+</div>
+
+<div class="container-fluid index-page">
+
+    <div class="about-me container">
+
+        <%- aboutMe[0].content %>
+
+    </div>
+
+    <div class="featured-blogs container">
+        <h2>Featured Blogs</h2>
+        <div class="row mx-auto justify-content-center">
+            <% for (let i = 0; i < blogs.length; i++) { %> 
+                <% if (blogs[i].featured) { %> 
+                    <div class="img">
+                        <h3 class="index-title"><%= blogs[i].title %></h3>
+                        <a href="/blog/<%= blogs[i].id %>"><img class="img-fluid feature-photo" src="/images/blogImages/<%=blogs[i].uploadedAt%>/<%=images[i].src%>" alt="Featured Blog Photo"></a>
+                    </div>
+                <% } %> 
+            <% } %> 
+        </div>
+    </div>
+
+    <div class="about-me-date container-fluid">
+        <% if (aboutMe[0].uploadedAt != aboutMe[0].updatedDate) { %> 
+            <span class="update">Home Page Last Updated On <%= timeConverter(aboutMe[0].updatedDate) %> </span>
+        <% } %> 
+    </div>
+
+</div>
+
+<!--Image + Editing Scripts-->
+<script src="/js/images.js"></script>
+<script src="/js/gallery.js"></script>
+
+<%- include('partials/footer') %> 

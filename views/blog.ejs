@@ -1,0 +1,45 @@
+<%-include('partials/header')%>
+
+<div class="container">
+    <h1 class="d-flex justify-content-center">Blog Input</h1>
+</div>
+
+<div class="d-flex justify-content-center">
+
+    <div class="blogs container">
+        <h2 id="new-blog">New Blog Input</h2>
+        <div class="container blog-post">
+            <form action="/blogInput" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                        
+                        <input id="date" type="text" name="date" hidden>
+
+                        <label for="title">Input Title Here</label>
+                        <input type="text" name="title" required>
+                        <br>
+                        <label for="blogInput">Input New Blog Text Here!</label>
+                        <textarea type="text" class="form-control blogInput" name="blogInput" 
+
+                        oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'
+                        
+                        required></textarea>
+                        
+                        <div id="uploadPhotos" class="row justify-content-center">
+                            <label for="files">Upload Photos for Blogs</label>
+                            <input class="form-control-sm chooseFile" type="file" name="blogImages" required multiple>
+                        </div>
+                        
+                        <button onsubmit="return confirm('Are you sure you want to submit this post?')" class="submit-blog submit-edits">Submit Blog</button>
+
+                </div>
+            </form>
+        </div>
+
+</div>
+
+<!--Kept for Time Counter; otherwise unneeded-->
+<script src="/js/blogEdit.js"></script>
+
+<%-include('partials/footer')%>
+
+
