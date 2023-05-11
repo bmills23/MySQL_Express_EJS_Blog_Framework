@@ -8,7 +8,8 @@ Node.js based blogging framework using Mysql, Express and EJS
 
 ### MySQL Workbench Setup
 
-- Download MySQL Workbench
+- Download MySQL and MySQL workbench if you want; this can be setup in the terminal
+- Make sure MySQL is running
 
 - Setup New Default Connection 
 <img width="801" alt="Screen Shot 2023-05-05 at 10 27 38 PM" src="https://user-images.githubusercontent.com/58231400/236599721-14a53bd3-be2a-48f6-a8cf-1bca049fb4dc.png">
@@ -55,3 +56,34 @@ Node.js based blogging framework using Mysql, Express and EJS
       3. updatedDate : int
       4. fileAmount : int
       5. aboutMeFiles : int 
+
+-Setup a User other than root for extra security with at least the following privileges
+      1. SELECT
+      2. INSERT
+      3. UPDATE
+      4. DELETE
+      5. ALTER
+
+- Setup a .env file in the root directory of the project; include variables below 
+      1. SESSION_SECRET = //Generate a strong random string; mine was about 64 characters with specials, capitals and numbers included, this string will be used by the session module to sign the session cookie
+      2. DB_HOST = "127.0.0.1" //will almost always work, can do "localhost" but that sometimes won't work
+      3. DB_USER = //whatever user you setup in previous step or root 
+      4. DB_PASSWORD = //whatever you setup in previous step, can be empty string
+      5. DB_DATABASE = "blogPosts"
+      6. DB_PORT = "3306" //default mysql port but this can be reconfigured
+
+-Add missing image directories for images
+      1. In public folder, add images and assets folders.
+      2. In images add the following subdirectories: 
+        - galleryImages
+        - index
+        - blogImages
+      3. In index add the following subdirectories: 
+        - banner
+        - aboutme
+
+-Install nodemon globally (npm i nodemon -g); this is unneccesary but helps with debugging
+
+-Navigate to the root directory and run the script npm run devStart
+
+-Register new user at localhost:3000/register or navigate manually with the UI 
