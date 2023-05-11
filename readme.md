@@ -65,12 +65,12 @@ Node.js based blogging framework using Mysql, Express and EJS
       5. ALTER
 
 - Setup a .env file in the root directory of the project; include variables below 
-      1. SESSION_SECRET = //Generate a strong random string; mine was about 64 characters with specials, capitals and numbers included, this string will be used by the session module to sign the session cookie
-      2. DB_HOST = "127.0.0.1" //will almost always work, can do "localhost" but that sometimes won't work
-      3. DB_USER = //whatever user you setup in previous step or root 
-      4. DB_PASSWORD = //whatever you setup in previous step, can be empty string
-      5. DB_DATABASE = "blogPosts"
-      6. DB_PORT = "3306" //default mysql port but this can be reconfigured
+  1. SESSION_SECRET = //Generate a strong random string; mine was about 64 characters with specials, capitals and numbers included, this string will be used by the session module to sign the session cookie
+  2. DB_HOST = "127.0.0.1" //will almost always work, can do "localhost" but that sometimes won't work
+  3. DB_USER = //whatever user you setup in previous step or root 
+  4. DB_PASSWORD = //whatever you setup in previous step, can be empty string
+  5. DB_DATABASE = "blogPosts"
+  6. DB_PORT = "3306" //default mysql port but this can be reconfigured
 
 -Add missing image directories for images
       1. In public folder, add images and assets folders.
