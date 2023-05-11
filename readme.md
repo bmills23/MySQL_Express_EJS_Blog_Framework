@@ -69,7 +69,7 @@ Node.js based blogging framework using Mysql, Express and EJS
   2. DB_HOST = "127.0.0.1" //will almost always work, can do "localhost" but that sometimes won't work
   3. DB_USER = //whatever user you setup in previous step or root 
   4. DB_PASSWORD = //whatever you setup in previous step, can be empty string
-  5. DB_DATABASE = "blogPosts"
+  5. DB_DATABASE = "blogPosts" or whatever schema you set up in the previous step
   6. DB_PORT = "3306" //default mysql port but this can be reconfigured
 
 -Add missing image directories for images
@@ -84,6 +84,6 @@ Node.js based blogging framework using Mysql, Express and EJS
 
 -Install nodemon globally (npm i nodemon -g); this is unneccesary but helps with debugging
 
--Navigate to the root directory and run the script npm run devStart
+-Navigate to the root directory and run the script npm run devStart to launch the website
 
--Register new user at localhost:3000/register or navigate manually with the UI 
+-Register new user at localhost:3000/register or navigate manually with the UI; the user now has access to the site's editing functions; recommended to remove any possible registration following this 
