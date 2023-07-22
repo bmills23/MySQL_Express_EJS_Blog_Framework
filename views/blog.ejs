@@ -18,11 +18,14 @@
                         <input type="text" name="title" required>
                         <br>
                         <label for="blogInput">Input New Blog Text Here!</label>
-                        <textarea type="text" class="form-control blogInput" name="blogInput" 
 
-                        oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'
+                        <div class="row justify-content-center">
+
+                            <label for="aboutMeUpdate">Edit About Me</label>
+                            <div contenteditable="true" id="editable" class="form-control content-editable"></div>
+                            <textarea class="form-control hidden-textarea" name="blogInput" hidden></textarea>
                         
-                        required></textarea>
+                        </div>
                         
                         <div id="uploadPhotos" class="row justify-content-center">
                             <label for="files">Upload Photos for Blogs</label>
@@ -37,8 +40,8 @@
 
 </div>
 
-<!--Kept for Time Counter; otherwise unneeded-->
-<script src="/js/blogEdit.js"></script>
+<!--Kept for Time Counter-->
+<script src="/js/blogInput.js"></script>
 
 <%-include('partials/footer')%>
 

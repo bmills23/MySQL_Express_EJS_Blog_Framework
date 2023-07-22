@@ -1,11 +1,13 @@
 //** Gallery Scripts **//
 
 //Photo Delete Button Activates Checkboxes
-const photoDelete = document.querySelector('#delete')
+const photoDelete = document.querySelector('#delete');
 //True Delete Removes the Images that were Selected with Class Checkbox
-const trueDelete = document.querySelector('#true-delete')
+const trueDelete = document.querySelector('#true-delete');
 
-const checkBoxes = document.querySelectorAll('.checkbox')
+const checkBoxes = document.querySelectorAll('.checkbox');
+
+const images = document.querySelectorAll('img');
 
 //Function Positions Textareas to their corresponding images
 function positionTextarea() {
@@ -32,22 +34,22 @@ function positionTextarea() {
 }
 
 //Handles Resizing of Textareas/Content Editable Divs
-window.addEventListener('mousemove', positionTextarea)
+window.addEventListener('mousemove', positionTextarea);
 
-window.addEventListener('load', positionTextarea)
+window.addEventListener('load', positionTextarea);
 
-window.addEventListener('resize', positionTextarea)
+window.addEventListener('resize', positionTextarea);
 
 //**Update Scripting
 
 //Button
-const capUpdate = document.querySelector('.captions-update')
+const capUpdate = document.querySelector('.captions-update');
 
 //False Caption, i.e. each visible CED
-const spans = document.querySelectorAll('.false-caption')
+const spans = document.querySelectorAll('.false-caption');
 
 //True Caption, i.e. each hidden textarea
-const captions = document.querySelectorAll('.gallery-caption')
+const captions = document.querySelectorAll('.gallery-caption');
 
 //Give the Caption Divs Value of Textareas
 function update() {

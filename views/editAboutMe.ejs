@@ -4,50 +4,84 @@
     <h1 class="d-flex justify-content-center">Edit Index Page</h1>
 </div>
 
-<div class="d-flex justify-content-center">
-    <div class="blogs container-fluid">
-            
-        <form onsubmit="return confirm('Are you sure you want to submit?  Make sure HTML stylings are 100% correct!!!')" action="/aboutMeUpdate?_method=PUT" method="POST" enctype="multipart/form-data">
+<div class="container-fluid index-page">
 
-            <div class="index-images">
-                <% for (let i = 1; i <= aboutMe[0].fileAmount; i++) { %>
-                    <img class="index-image" src="/images/index/banner/<%=i%>.jpeg"
-                    style= "width: calc(100% / <%= aboutMe[0].fileAmount %>)"/>
-                <% } %>
-            </div>
+    <div class="index-images"> <!--Render from DB-->
 
-            <div class="row justify-content-center">
-                <label for="index-images">Upload Photos for Banner</label>
-                <input class="form-control-sm chooseFile" type="file" name="bannerImage" multiple required>
-            </div>
-
-            <div class="row justify-content-center">
-
-                <input id="date" type="text" name="newDate" hidden>
-
-                <label for="index-images" class="row">Upload Photos for About Me</label>
-                <input class="form-control-sm chooseFile" type="file" name="aboutMeImage" multiple required>
-
-                <label for="aboutMeUpdate">Edit About Me</label>
-                <div contenteditable="true" class="form-control content-editable" placeholder="Copy and Paste Text from Above" required><%- aboutMe[0].content %> </div>
-                <textarea class="form-control hidden-textarea" name="aboutMeUpdate" hidden></textarea>
-
-            </div>
-
-            <button class="submit-edits">Submit Edits</button>
-
-        </form>
-
-        <div class="about-me-date container-fluid">
-            <% if (aboutMe[0].uploadedAt != aboutMe[0].updatedDate) { %> 
-                <span class="update">Home Page Last Updated On <%= timeConverter(aboutMe[0].updatedDate) %> </span>
-            <% } %> 
-        </div>
+        <%-aboutMe[0].bannerContent %>
 
     </div>
+        
+    <form 
+    onsubmit="return confirm('Warning: if you are submitting photos and rearranging banner items in this step, banner rearrangements will not persist on submit; if you want to persist banner rearrangements, cancel this submittal and undo the file upload by clicking Undo Upload button.')" 
+    action="/aboutMeUpdate?_method=PUT"
+        method="POST" 
+        enctype="multipart/form-data"
+        class="editing-form">
+
+        <!--Banner Content input-->
+        <input id="banner-content" hidden>
+
+        <!--Image Files From DB (i.e. no mod yet)-->
+        <input type="number" name="bannerFileField" value="<%=aboutMe[0].fileAmount%>" hidden>
+        <input type="number" name="aboutMeFileField" value="<%=aboutMe[0].aboutMeFiles%>" hidden>
+
+        <!--Trash Can Icon-->
+        <div id="trash-can" class="hidden"></div>
+
+        <div class="row">
+
+            <label for="index-images">Upload Photos for Banner</label>
+            <input id="banner-images" class="form-control-sm chooseFile" type="file" name="bannerImage" multiple>
+        
+        </div>
+
+        <button id="undo-banner-upload">Undo Upload</button>
+
+        <div class="row">
+
+            <input id="date" type="text" name="newDate" hidden>
+
+            <label for="index-images">Upload Photos for About Me</label>
+            <input id="content-images" class="form-control-sm chooseFile" type="file" name="aboutMeImage" multiple>
+
+        </div>
+
+        <button id="undo-content-upload">Undo Upload</button>
+    
+        <div class="row justify-content-center">
+
+            <label for="aboutMeUpdate">Edit About Me</label>
+            <div contenteditable="true" id="editable" class="form-control content-editable"><%- aboutMe[0].content %> </div>
+            <textarea class="form-control hidden-textarea" name="aboutMeUpdate" hidden></textarea>
+        
+        </div>
+
+        <button class="submit-edits">Submit Edits</button>
+
+    </form>
+
+    <!--Editing Tools/Hidden-->
+    <div id="dropdown" class="hidden" contenteditable="false">
+        <button id="resize-button" onclick="event.preventDefault()">Resize</button>
+        <button id="move-button" onclick="event.preventDefault()">Move</button>
+        <button id="delete-button" onclick="event.preventDefault()">Delete</button>
+    </div>
+
+    <div class="about-me-date container-fluid">
+        <% if (aboutMe[0].uploadedAt != aboutMe[0].updatedDate) { %> 
+            <span class="update">Home Page Last Updated On <%= timeConverter(aboutMe[0].updatedDate) %> </span>
+        <% } %> 
+    </div>
+
 </div>
 
 <!--Image + Editing Scripts-->
 <script src="/js/aboutMe.js"></script>
+
+<script src ="/js/dragndrop.js"></script>
+
+<!--Photo Editing Scripts-->
+<script src="/js/drag/drag.js"></script>
 
 <%- include('partials/footer')%>

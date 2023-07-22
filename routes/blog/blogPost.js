@@ -1,32 +1,24 @@
 //Express
-const express = require('express')
+const express = require('express');
 
 //uuid for unique token generation
-const crypto = require('crypto')
+const crypto = require('crypto');
 
-//Base Functions
-const functions = require('./function')
-
-    //Authentication 
-    const checkAuthenticated = functions.checkAuthenticated
+//Authentication 
+const { checkAuthenticated }= require('../engines/functions/function');
 
 //Mysql Functionality
-const mysql = require('mysql2')
+const mysql = require('mysql2');
 
 //Database Configuration
-const database = require('./database')
-const db = database.db
+const { db } = require('../database');
 
-//Multer for Disk Storage Pathing
-const multer  = require('multer')
+//Uploading Engine
+const { upload } = require('../engines/blog/blogImages');
 
-    //Uploading Engine
-    const uploading = require('./engines/blogImages')
-
-    const upload = uploading.upload
-
-//FS for File Directory Pathing
-const fs = require('fs')  
+//Get the UserID dynamically 
+require('dotenv').config();
+const userID = process.env.ID;
 
 module.exports = app => {
 
@@ -45,42 +37,45 @@ module.exports = app => {
        async (req, res) => {
         try {
 
-          console.log('POST Method blogInput')       
+          console.log('POST Method blogInput');
+
+          console.log(req.body)
          
           /*Generate a token to pass to next blogInput page;
           this will ensure that client cannot return to the previous page at any point;
           throws an error as defined in blogInput.get*/
-          const token = crypto.randomBytes(16).toString('hex')
-          req.session.token = token
-          res.cookie('token', token, { httpOnly : true })
+          const token = crypto.randomBytes(16).toString('hex');
+          req.session.token = token;
+          res.cookie('token', token, { httpOnly : true });
 
           //Capture blog content and title input
-          const content = req.body.blogInput
-          const title = req.body.title
+          let content = req.body.blogInput;
+          const title = req.body.title;
 
-          //Splits Content into Different Paragraphs in an array based on line breaks
-          const paragraphs = content.split('\n');
+          //Clean it up
+          content.replace(/cursor: pointer;/g, '');
 
-          //wraps each paragraph in paragraph tags, allowing for image prepend/append
-          const templates = paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`);
-
-          //Rejoin templates into single string of HTML content 
-          const template = templates.join('');
+          /* 
+            Need to clean up any accessory html tags, negates the use of stylings as well
+            removes all html tags that aren't <div>, </div>, or <br>
+          */
+          
+          content.replace(/<(?!\/?(div|br)\b)[^>]*>/gi, '');
       
           //Unix Time Stamp value; if never edited, update will always be date
-          const uploadedAt = req.body.date
-          const update = req.body.date
+          const uploadedAt = req.body.date;
+          const update = req.body.date;
           
           //Amount of Files Uploaded by User
-          const fileAmount = req.files.blogImages.length 
+          const fileAmount = req.files.blogImages.length;
 
           //This is the first round of uploading, so we will pass newBlog to req.params
-          const newBlog = true   
+          const newBlog = true;
           
           //Promise for Database Communication
           await new Promise ((resolve,reject) => {
             db.getConnection( async (err, connection) => {
-            if (err) throw (err)
+            if (err) throw (err);
 
             //Begin blog text insertion formatting
 
@@ -98,20 +93,21 @@ module.exports = app => {
 
             //Inserts req values defined above and sets featured to false
             const blogSql = `INSERT INTO post 
-              (content, trueContent, uploadedAt, updatedDate, title, fileAmount, featured) 
-              VALUES (?,?,?,?,?,?,?)`
+              (content, trueContent, uploadedAt, updatedDate, title, fileAmount, featured, userID) 
+              VALUES (?,?,?,?,?,?,?,?)`
 
             const values = [
-              template,
+              content,
               '',
               uploadedAt,
               update,
               title,
               fileAmount,
-              0
-            ]
+              0,
+              userID
+            ];
 
-            const insertQuery = mysql.format(blogSql, values)
+            const insertQuery = mysql.format(blogSql, values);
 
             /* 
             *FOR INSERTION INTO DB blogImages
@@ -125,38 +121,39 @@ module.exports = app => {
 
             //Begin Image Insertion Formatting
             //Array of Objects Defining Uploaded Images
-            const blogImages = req.files.blogImages
+            const blogImages = req.files.blogImages;
   
             for (let i = 0; i < blogImages.length; i++) {
               //x = 0, y = 0, src = originalname, uploadedAt = unix date
               //x and y will be defined during the image editing phase 
               const imageSql = `INSERT INTO blogImages
-              (x, y, src, uploadedAt)
-              VALUES (?, ?, ?, ?)`
+              (x, y, src, uploadedAt, userID)
+              VALUES (?, ?, ?, ?, ?)`
 
               const imageValues = [
                 0,
                 0,
                 blogImages[i].originalname,
-                uploadedAt
-              ]
+                uploadedAt,
+                userID
+              ];
 
-              const imagesInsert = mysql.format(imageSql, imageValues)
+              const imagesInsert = mysql.format(imageSql, imageValues);
 
               connection.query( imagesInsert, (err, result) => {
-                if (err) throw (err)
+                if (err) throw (err);
                 else {
-                  connection.release()
-                  console.log(`${blogImages[i].originalname} Information Inserted`)
+                  connection.release();
+                  console.log(`${blogImages[i].originalname} Information Inserted`);
                 }
               })
             }
           
             connection.query (insertQuery, (err, result) => {
 
-              connection.release()
-              if (err) reject(err)
-              return resolve(result)
+              connection.release();
+              if (err) reject(err);
+              return resolve(result);
               })
             })
           })

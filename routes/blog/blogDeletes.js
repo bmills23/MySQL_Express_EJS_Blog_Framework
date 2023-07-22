@@ -1,20 +1,19 @@
-const express = require('express')
+const express = require('express');
 
-//Base Functions
-const functions = require('./function.js')
-
-    //Authentication 
-    const checkAuthenticated = functions.checkAuthenticated
+//Authentication 
+const { checkAuthenticated } =  require('../engines/functions/function');
 
 //Mysql Functionality
-const mysql = require('mysql2')
+const mysql = require('mysql2');
 
 //Database Configuration
-const database = require('./database')
-const db = database.db
+const { db } = require('../database.js');
 
-//FS for File Directory Pathing
-const fs = require('fs')  
+const { deleteBlogKey } = require('../engines/blog/blogImagesDelete');
+
+//Get the UserID 
+require('dotenv').config();
+const userID = process.env.ID;
 
 module.exports = app => {
 
@@ -30,35 +29,38 @@ module.exports = app => {
     
           await new Promise ((resolve,reject) => {
             db.getConnection( async (err, connection) => {
-              if (err) reject(err)
+              if (err) reject(err);
 
-              //Removes the Directory, which is named after the original UNIX value
-              fs.rmSync(`./public/images/blogImages/${uploadedAt}`, { recursive: true, force: true })
+              deleteBlogKey(uploadedAt, null, true, () => {
+                console.log('Blog Directory Deleted')
+              });
             
               //Setup Blog Entry Deletion Query
               const blogDelete = 
-              `DELETE FROM post WHERE uploadedAt = ?;
-              ALTER TABLE post AUTO_INCREMENT = 1;`
+              `DELETE FROM post WHERE uploadedAt = ? AND userID = ?;`
 
-              const deleteQuery = mysql.format(blogDelete, uploadedAt)
+              const deleteQuery = mysql.format(blogDelete, [uploadedAt, userID])
 
               //Delete the Post
               connection.query (deleteQuery, (err, result) => {
                 console.log('Post Entry Deleted')
+                console.log(err)
+                console.log(result)
                 if (err) reject(err)
               })
             
               //Setup BlogImages Deletion Query
               const imagesDelete = 
-              `DELETE FROM blogImages WHERE uploadedAt = ?;
-              ALTER TABLE blogImages AUTO_INCREMENT = 1;`
+              `DELETE FROM blogImages WHERE uploadedAt = ? AND userID = ?;`
 
-              const imagesDeleteQuery = mysql.format(imagesDelete, uploadedAt)
+              const imagesDeleteQuery = mysql.format(imagesDelete, [uploadedAt, userID])
 
               //Delete BlogImages Entries
               connection.query (imagesDeleteQuery, (err, result) => {
                 connection.release()
                 console.log('Deleted BlogImage Entries')
+                console.log(err)
+                console.log(result)
                 if (err) reject(err)
 
                 return resolve(result)

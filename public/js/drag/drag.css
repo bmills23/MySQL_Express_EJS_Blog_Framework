@@ -27,10 +27,6 @@
     background-color: #fff;
 }
 
-.hidden {
-    display: none;
-}
-
 #margin-slider-top, #margin-slider-bottom, #margin-slider-left, #margin-slider-right {
     position: absolute;
     top: 0;
@@ -52,9 +48,23 @@
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     color: #fff;
-    background-color: #4d8b66;
+    background-color: #4B5896;
 }
 
 #resize-button:hover, #move-button:hover {
-    background-color: #7ad9a0;
+    background-color: #7882B1;
+}
+
+.index-image:hover {
+    cursor: grab;
+    transform: scale(1.1);
+}
+
+.index-image:active {
+    cursor: grabbing;
+}
+
+.box {
+    max-height: 200px; /* Adjust the desired height for the images */
+    overflow: hidden;
 }

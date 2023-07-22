@@ -1,24 +1,17 @@
 //Express
-const express = require('express')
+const express = require('express');
 
 //uuid for unique token generation
-const crypto = require('crypto')
+const crypto = require('crypto');
 
-//Base Functions
-const functions = require('./function')
-
-    //Unix Time Conversion
-    const timeConverter = functions.timeConverter
-
-    //Check Authenticated
-    const checkAuthenticated = functions.checkAuthenticated
+//Unix Time Conversion
+const { checkAuthenticated, timeConverter } = require('./engines/functions/function')
 
 //Mysql Functionality
-const mysql = require('mysql2')
+const mysql = require('mysql2');
 
 //Database Configuration
-const database = require('./database.js')
-const db = database.db
+const { db } = require('./database.js');
 
 //Console.Log Early Warning, Will Fire with Index Get
 db.getConnection( (err, connection) => {
@@ -27,11 +20,13 @@ db.getConnection( (err, connection) => {
     console.log ("DB connected successful: " + connection.threadId)
 })
 
-//Multer for Disk Storage Pathing
-const multer  = require('multer')
+//File Engine 
+const { upload }  = require('./engines/aboutme/aboutMeImages');
+const { deleteImages } = require('./engines/functions/aboutMeImageDelete');
 
-//FS for File Directory Pathing, may be Unnecessary
-const fs = require('fs') 
+//Get the UserID 
+require('dotenv').config();
+const userID = process.env.ID;
 
 module.exports = app => {
     
@@ -40,70 +35,100 @@ module.exports = app => {
     //Index 
     app.get('/', (req, res) => {
         db.getConnection( async (err, connection) => {
-            if (err) throw (err)
+            if (err) throw (err);
 
             //Query About Me Table
-            const sqlSearch = "SELECT * FROM aboutme;"
+            const sqlQuery = "SELECT * FROM aboutme WHERE userID = ?;";
+            const sqlSearch = mysql.format(sqlQuery, userID);
+
+            //Query About Me Images Table
+            const bannerImageQuery = "SELECT * FROM aboutMeImages WHERE imageType = 'bannerImage' AND userID = ?;";
+            const bannerImageSearch = mysql.format(bannerImageQuery, userID);
+
+            const aboutMeImageQuery = "SELECT * FROM aboutMeImages WHERE imageType = 'aboutMeImage' AND userID = ?;";
+            const aboutMeImageSearch = mysql.format(aboutMeImageQuery, userID);
 
             //Query Blog Posts
-            const blogSearch = "SELECT * FROM post;"
+            const blogQuery = "SELECT * FROM post WHERE userID = ?;";
+            const blogSearch = mysql.format(blogQuery, userID);
 
             //Query blogImages 
-            const imageSearch = "SELECT * FROM blogImages;"
-        
+            const imageQuery = "SELECT * FROM blogImages WHERE userID = ?;";
+            const imageSearch = mysql.format(imageQuery, userID);
+
             connection.query (sqlSearch, (err, result) => {
-              if (err) throw (err)
+              if (err) throw (err);
 
-              const aboutMe = result
+              const aboutMe = result;
 
-              connection.query (blogSearch, (err, result) => {
-                if (err) throw (err)
+              connection.query (bannerImageSearch, (err, result) => {
 
-                const blogs = result
+                const bannerImages = result;
 
-                connection.query (imageSearch, (err, result) => {
-                  connection.release()
-                  if (err) throw (err)
+                connection.query (aboutMeImageSearch, (err, result) => {
+                  if (err) throw (err);
+  
+                  const aboutMeImages = result;
+  
+                  connection.query (blogSearch, (err, result) => {
+                    if (err) throw (err);
+    
+                    const blogs = result;
+    
+                    connection.query (imageSearch, (err, result) => {
+                      connection.release();
+                      if (err) throw (err);
+    
+                      const images = result;
+    
+                      res.render('index', 
+    
+                        {
+    
+                          aboutMe, 
+                          bannerImages,
+                          aboutMeImages,
+                          blogs, 
+                          images,
+    
+                          //Header
+                          originalUrl : req.originalUrl,
+                          isAuthenticated : req.isAuthenticated(),
+                          
+                          timeConverter
+    
+                        });  
+    
+                      });
+    
+                  });    
+  
+                });
+              })
 
-                  const images = result
+            });
 
+        });
 
-                  res.render('index', 
-                  {
-                    aboutMe, blogs, images,
-
-                    //Header
-                    originalUrl : req.originalUrl,
-                    isAuthenticated : req.isAuthenticated(),
-                    
-                    timeConverter
-                  })  
-
-                  })
-
-              })       
-
-            })
-        })
-    })
+    });
 
     //Eyes Only Edit Index Page
     app.get('/editAboutMe', checkAuthenticated, (req, res) => {
         db.getConnection( async (err, connection) => {
           if (err) throw (err)
-          const sqlSearch = "SELECT * FROM aboutme;"
-          const aboutMeResult = mysql.format(sqlSearch)
-      
+          const sqlSearch = "SELECT * FROM aboutme WHERE userID = ?;"
+          const aboutMeResult = mysql.format(sqlSearch, userID);
+       
           connection.query (aboutMeResult, (err, result) => {
-            connection.release()
-            if (err) throw (err)
+            connection.release();
+            if (err) throw (err);
       
-            const aboutMe = result 
-          
+            const aboutMe = result;
+       
             res.render('editAboutMe', 
             { 
               aboutMe, 
-              
+                            
               //Header
               originalUrl : req.originalUrl,
               isAuthenticated : req.isAuthenticated(),
@@ -116,71 +141,10 @@ module.exports = app => {
 
     //*********PUT REQUESTS*********//
 
-    //Index About Me Photos Upload Engine
-    const aboutMeStorage  = multer.diskStorage({
-
-      destination: async (req, file, cb) => {
-        if (file.fieldname === 'aboutMeImage') {
-          cb(null, './public/images/index/aboutme/')
-        } else if (file.fieldname === 'bannerImage') {
-          cb(null, './public/images/index/banner/')
-        }
-      },
-
-      filename: (req, file, cb) => {
-        if (file.fieldname === 'bannerImage') {
-          cb(null, req.files.bannerImage.length + '.jpeg')
-        } else {
-          cb(null, req.files.aboutMeImage.length + '.jpeg')
-        }
-      },
-
-    });
-
-    //Middleware to Delete Existing Files in the Index Image Directories
-    //Just upload new photos to replace all the old for ease
-    const deleteExistingFilesMiddleware = async (req, res, next) => {
-
-      const bannerFolderPath = './public/images/index/banner'
-      const aboutMeFolderPath = './public/images/index/aboutme'
-    
-      const unlinkPromises = []
-    
-      const bannerFiles = await fs.promises.readdir(bannerFolderPath)
-      for (const file of bannerFiles) {
-        unlinkPromises.push(fs.promises.unlink(`${bannerFolderPath}/${file}`))
-      }
-    
-      const aboutMeFiles = await fs.promises.readdir(aboutMeFolderPath)
-      for (const file of aboutMeFiles) {
-        unlinkPromises.push(fs.promises.unlink(`${aboutMeFolderPath}/${file}`))
-      }
-    
-      await Promise.all(unlinkPromises)
-    
-      next()
-    
-    }
-  
-    //Setup the Multer Update Object for About Me Photos
-    const aboutMeUpdate = multer({
-       storage: aboutMeStorage,
-       fileFilter: (req, file, cb) => {
-          const allowedTypes = ['image/jpeg', 'image/png', 'image/gif']
-          if (allowedTypes.includes(file.mimetype)) {
-            cb(null, true)
-          } else {
-            cb(new Error('Invalid File Type; Must be jpeg, png or gif.'))
-          }
-       }
-    })
-
     //Update About Me, Put Only Because the DB is seeded; see extraneousfunctions.js
     app.put('/aboutMeUpdate', 
-    //Call the middleware to delete files first
-    deleteExistingFilesMiddleware,
     //Then call the function to upload new files
-    aboutMeUpdate.fields([
+    upload.fields([
       {
         name: 'bannerImage'
       },
@@ -192,77 +156,313 @@ module.exports = app => {
     async (req, res) => {
         try {
 
-        console.log('PUT Method AboutMeUpdate')
+        console.log('PUT Method AboutMeUpdate');
+
+        console.log(req.body)
 
         /*Generate a token to pass to next blogInput2 page;
         this will ensure that client cannot return to the previous page at any point;
         throws an error as defined in get*/
-        const token = crypto.randomBytes(16).toString('hex')
-        req.session.token = token
-        res.cookie('token', token, { httpOnly : true })
+        const token = crypto.randomBytes(16).toString('hex');
+        req.session.token = token;
+        res.cookie('token', token, { httpOnly : true });
 
-        const fileAmount = req.files.bannerImage.length
+        //Setup Variables for Varying Scenarios
 
-        const aboutMeFiles = req.files.aboutMeImage.length
+        //fileAmount is for bannerImages
+        let fileAmount = 0;
+        const bannerImages = req.files.bannerImage;
+        console.log(bannerImages);
+        
+        //aboutMeFiles is for photos in the body of the about me
+        let aboutMeFiles = 0;
+        const aboutMeImages = req.files.aboutMeImage;
+        console.log(aboutMeImages);
+
+        /*If any photos whatsoever are uploaded, this will trigger
+          a redirect to the blogEdit2 page for aboutme
+        */
+
+        let indexPhotos = false;
+
+        if (aboutMeImages || bannerImages) {
+          indexPhotos = true;
+        }
+
+        // Setup Variables for Deleted Files
+        // Deleted Banner Files
+        let deletedBannerImagesAmount = 0;
+        const deletedBannerImages = req.body.fileNameBanner;
+
+        console.log(deletedBannerImages)
+
+        if (deletedBannerImages) {
+          if (typeof deletedBannerImages === "string") {
+            deletedBannerImagesAmount = 1
+          } else {
+            deletedBannerImagesAmount = deletedBannerImages.length;
+          }
+        }
+
+        // Deleted About Me Files
+        let deletedAboutMeImagesAmount = 0;
+        const deletedAboutMeImages = req.body.fileName;
+
+        console.log(deletedAboutMeImages)
+
+        if (deletedAboutMeImages) {
+          if (typeof deletedAboutMeImages === "string") {
+            deletedAboutMeImagesAmount = 1
+          } else {
+            deletedAboutMeImagesAmount = deletedAboutMeImages.length;
+          }
+        }
 
         //About Me Content 
-        const newContent = req.body.aboutMeUpdate
-       //Same Functionality as the blogInput
-        //Splits Content into Different Paragraphs in an array based on line breaks
-        const paragraphs = newContent.split('\n')
+        let content = req.body.aboutMeUpdate;
 
-        //Regex wraps each paragraph in paragraph tags, allowing for image prepend/append
-        const templates = paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
+        //Clean it up
+        content.replace(/cursor: pointer;/g, '');
 
-        //Rejoin templates into single string of HTML content 
-        let content = templates.join('')
+        /* 
+          Need to clean up any accessory html tags, negates the use of stylings as well
+          removes all html tags that aren't <div>, </div>, or <br>
+        */
+        
+        content.replace(/<(?!\/?(div|br)\b)[^>]*>/gi, '');
 
         //Updated Date
-        const newDate = req.body.newDate
+        const newDate = req.body.newDate;
 
-        const indexPhotos = true
-    
+        //Previous File Amounts for Next Editing Page, if applicable
+        const aboutMeFileField = req.body.aboutMeFileField;
+
         await new Promise ((resolve,reject) => {
+
             db.getConnection( async (err, connection) => {
             if (err) reject(err)
+
+            if (bannerImages) {
+
+              fileAmount = bannerImages.length;
+
+              for (let i = 0; i < fileAmount; i++) {
+                //x = 0, y = 0, src = originalname, uploadedAt = unix date
+                //x and y will be defined during the image editing phase 
+                const imageSql = `INSERT INTO aboutMeImages
+                (x, y, src, uploadedAt, imageType, userID)
+                VALUES (?, ?, ?, ?, ?, ?)`;
+  
+                const imageValues = [
+                  0,
+                  0,
+                  bannerImages[i].originalname,
+                  newDate,
+                  'bannerImage',
+                  userID
+                ];
+  
+                const imagesInsert = mysql.format(imageSql, imageValues);
+  
+                connection.query( imagesInsert, (err, result) => {
+                  if (err) reject(err)
+                  else {
+                    connection.release();
+                    console.log(`${bannerImages[i].originalname} Information Inserted`);
+                  }
+                })
+              }
+            }
+
+            if (aboutMeImages) {
+
+              aboutMeFiles = aboutMeImages.length;
+
+              for (let i = 0; i < aboutMeFiles; i++) {
+                //x = 0, y = 0, src = originalname, uploadedAt = unix date
+                const imageSql = `INSERT INTO aboutMeImages
+                (x, y, src, uploadedAt, imageType, userID)
+                VALUES (?, ?, ?, ?, ?, ?)`
+  
+                const imageValues = [
+                  0,
+                  0,
+                  aboutMeImages[i].originalname,
+                  newDate,
+                  'aboutMeImage',
+                  userID 
+                ];
+  
+                const imagesInsert = mysql.format(imageSql, imageValues);
+  
+                connection.query( imagesInsert, (err, result) => {
+                  if (err) reject(err)
+                  else {
+                    connection.release()
+                    console.log(`${aboutMeImages[i].originalname} Information Inserted`)
+                  }
+                })
+              }
+              
+            }
+
+          //Check for File Deletions First, else skip to blog update
+          if (deletedAboutMeImages) {
+
+            //Setup array to delete image entries
+            let imageValues;
+
+            if (typeof deletedAboutMeImages === 'string') {
+              
+              imageValues = [req.body.fileName, userID];  
+              console.log(imageValues);  
+
+              const imageDelete = `DELETE FROM aboutMeImages 
+              WHERE imageType = 'aboutMeImage' AND src = ? AND userID = ? LIMIT 1`;
+            
+              const imageQuery = mysql.format(imageDelete, imageValues);
+
+              connection.query (imageQuery, (err, result) => {
+                  connection.release()
+                  if (err) reject(err);
+                  console.log(result)
+                  console.log('Image Entry Deleted');
+              });
+
+            } else {
+
+              filesLength = deletedAboutMeImages.length
+              console.log(filesLength);
+
+              //Delete Entries for Deleted Images in Database First
+              for (let i = 0; i < filesLength; i++) {
+              
+                imageValues = [req.body.fileName[i], userID];
+
+                const imageDelete = `DELETE FROM aboutMeImages
+                WHERE imageType = 'aboutMeImage' AND src = ? AND userID = ? LIMIT 1`;
+              
+                const imageQuery = mysql.format(imageDelete, imageValues);
+
+                connection.query (imageQuery, (err, result) => {
+                    connection.release()
+                    if (err) reject(err);
+                    console.log(result)
+                    console.log('Image Entry Deleted');
+                });
+                  
+              };
+
+            }
+
+            //Function imported from functions/blogImageDelete
+            await deleteImages('aboutMeImage', 'aboutme', connection, deletedAboutMeImages)
     
+          } 
+          
+          if (deletedBannerImages) {
+
+            //Setup array to delete image entries
+            let imageValues = [];
+
+            if (typeof deletedBannerImages === 'string') {
+              
+              imageValues = [req.body.fileNameBanner, userID];
+              console.log(imageValues)
+
+              const imageDelete = `DELETE FROM aboutMeImages 
+              WHERE imageType = 'bannerImage' AND src = ? AND userID = ? LIMIT 1`;
+            
+              const imageQuery = mysql.format(imageDelete, imageValues);
+
+              connection.query (imageQuery, (err, result) => {
+                  connection.release()
+                  if (err) reject(err);
+                  console.log(result)
+                  console.log('Image Entry Deleted');
+              });
+
+            } else {
+
+              filesLength = deletedBannerImages.length
+
+              //Delete Entries for Deleted Images in Database First
+              for (let i = 0; i < filesLength; i++) {
+              
+                imageValues = [req.body.fileNameBanner[i], userID];
+                console.log(imageValues);
+
+                const imageDelete = `DELETE FROM aboutMeImages
+                WHERE imageType = 'bannerImage' AND src = ? AND userID = ? LIMIT 1`;
+              
+                const imageQuery = mysql.format(imageDelete, imageValues);
+
+                connection.query (imageQuery, (err, result) => {
+                    connection.release()
+                    if (err) throw (err);
+                    console.log(result)
+                    console.log('Image Entry Deleted');
+                });
+                  
+              };
+
+            }
+
+            //Function imported from functions/blogImageDelete
+            await deleteImages('bannerImage', 'banner', connection, deletedBannerImages);
+        
+          }
+
             const update = 
             `UPDATE aboutme SET 
               content = ?,
               updatedDate = ?,
-              fileAmount = ?,
-              aboutMeFiles = ?;`
+              fileAmount = fileAmount + ? - ?,
+              aboutMeFiles = aboutMeFiles + ? - ?
+            WHERE userID = ?;`
 
             const values = [
               content,
               newDate, 
               fileAmount,
-              aboutMeFiles
+              deletedBannerImagesAmount,
+              aboutMeFiles,
+              deletedAboutMeImagesAmount,
+              //bannerContent defined in next step
+              userID
             ] 
 
-            const aboutMeContentUpdate = mysql.format(update, values)
+            console.log(values)
+
+            const aboutMeContentUpdate = mysql.format(update, values);
     
-            connection.query (aboutMeContentUpdate, (err, result)=> {
+            connection.query (aboutMeContentUpdate, (err, result) => {
 
-              console.log(result)
+              console.log(result);
 
-              connection.release()
-              if (err) reject(err)
-              return resolve(result)
+              connection.release();
+              if (err) reject(err);
+              return resolve(result);
               
             })
 
         })
 
       })
-    
-      //Easier and more concise to piggyback existing photo editor page
-      res.redirect('/blogEdit2?indexPhotos=' + indexPhotos)
+
+      if (indexPhotos) {
+        //Easier and more concise to piggyback existing photo editor page
+        res.redirect('/blogEdit2?indexPhotos=' + indexPhotos + 
+                    '&oldAboutMeFiles=' + aboutMeFileField);
+                    
+      } else {
+        res.redirect('/');
+      }
 
     } catch {
 
-      res.redirect('/editAboutMe')
-      console.log('ERROR')
+      res.redirect('/editAboutMe');
+      console.log('ERROR');
 
     }
 

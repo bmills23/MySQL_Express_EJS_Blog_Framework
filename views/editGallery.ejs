@@ -27,10 +27,13 @@
 
             <form class="col-8" id="photo-delete" action="/photoDelete?_method=DELETE" method="POST">     
 
-                    <% for (let i = 0; i < gallery.length; i++) { %>  
+                <!--Database stores subdirectories in the same order as the bucket
+                but images are in the opposite order-->
+
+                <% for (let i = 0; i < gallery.length; i++) { %>
 
                     <div id="upload-photos" class="d-flex justify-content-center">
-                        <img class="img-fluid" src="images/galleryImages/<%= gallery[i].uploadedAt %>/<%= gallery[i].name %> " alt="<%= gallery.name %> " data-identifier="<%= gallery[i].uploadedAt + '-' + gallery[i].name %>">
+                        <img class="img-fluid" src="https://<%BUCKETNAME%>.s3.amazonaws.com/galleryImages/<%=gallery[i].uploadedAt%>/<%=gallery[i].name%>" alt="<%= gallery[i].name %> " data-identifier="<%= gallery[i].uploadedAt + '-' + gallery[i].name %>">
                         <input type="checkbox" class="checkbox" name="<%= gallery[i].uploadedAt %>" value="<%= gallery[i].name %>" hidden>
                     </div> 
 
@@ -40,7 +43,7 @@
 
             <form class="col-4" id="photo-update" action="/photoUpdate?_method=PUT" method="POST">
 
-                <% for (let i = 0; i < gallery.length; i++) { %> 
+                <% for (let i = 0; i < gallery.length; i++) { %>
 
                     <% if (gallery[i].caption === '') { %>
 

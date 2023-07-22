@@ -1,33 +1,28 @@
 //Express
-const express = require('express')
+const express = require('express');
 
 //uuid for unique token generation
-const crypto = require('crypto')
+const crypto = require('crypto');
 
-//Base Functions
-const functions = require('./function')
-
-    //Authentication 
-    const checkAuthenticated = functions.checkAuthenticated
+//Authentication 
+const { checkAuthenticated } = require('../engines/functions/function');
 
 //Mysql Functionality
-const mysql = require('mysql2')
+const mysql = require('mysql2');
 
 //Database Configuration
-const database = require('./database')
-const db = database.db
+const { db } = require('../database');
 
-//Multer for Disk Storage Pathing
-const multer  = require('multer')
+//Uploading Engine
+const { upload } = require('../engines/blog/blogImages');
 
-    //Uploading Engine
-    const uploading = require('./engines/blogImages')
+//S3 BlogPhoto Deletion Function
+const { deleteFiles } = require('../engines/functions/blogImageDelete');
 
-    const upload = uploading.upload
+//Get the UserID dynamically 
+require('dotenv').config();
+const userID = process.env.ID;
 
-//FS for File Directory Pathing
-const fs = require('fs')  
-  
 module.exports = app => {
 
   //Blog Update Post/Update old posts (blogEdit.ejs)
@@ -41,45 +36,45 @@ module.exports = app => {
   checkAuthenticated, async (req, res) => {
     try {
 
-        console.log('POST Method blogUpdate')
+        console.log('POST Method blogUpdate');
 
         /*Generate a token to pass to next blogInput page;
         this will ensure that client cannot return to the previous page at any point;
         throws an error as defined in blogInput.get*/
-        const token = crypto.randomBytes(16).toString('hex')
-        req.session.token = token
-        res.cookie('token', token, { httpOnly : true })
+        const token = crypto.randomBytes(16).toString('hex');
+        req.session.token = token;
+        res.cookie('token', token, { httpOnly : true });
   
         //Blog Input 
-        const newContent = req.body.blogInput
-        const trueContent = req.body.trueContent
-        const newTitle = req.body.title
+        const newContent = req.body.blogInput;
+        const trueContent = req.body.trueContent;
+        const newTitle = req.body.title;
     
         //Same Functionality as the blogInput
         //Splits Content into Different Paragraphs in an array based on line breaks
-        const paragraphs = newContent.split('\n')
+        const paragraphs = newContent.split('\n');
 
         //Regex wraps each paragraph in paragraph tags, allowing for image prepend/append
-        const templates = paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
+        const templates = paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`);
 
         //Rejoin templates into single string of HTML content 
-        let content = templates.join('')
+        let content = templates.join('');
 
         //New Unix Value
-        const newDate = req.body.newDate 
+        const newDate = req.body.newDate;
     
         //Old Date, Unchanged and Used as identifier
-        const uploadedAt = req.body.date  
+        const uploadedAt = req.body.date;
         
         //FileAmount is 0 by default in case no new photos are added
-        let fileAmount = 0
+        let fileAmount = 0;
 
         //Fileslength will be Derived From deletedFiles
-        const deletedFiles = req.body.fileName
+        const deletedFiles = req.body.fileName;
 
         //Update File Field
         if (Object.keys(req.files).length !== 0) {
-          fileAmount = req.files.blogImages.length 
+          fileAmount = req.files.blogImages.length;
         }
 
         //Promise to Communicate with Database
@@ -90,21 +85,22 @@ module.exports = app => {
 
           //Begin Image Insertion Formatting
           //Array of Objects Defining Uploaded Images
-          const blogImages = req.files.blogImages
+          const blogImages = req.files.blogImages;
           
           if (blogImages) {
             for (let i = 0; i < blogImages.length; i++) {
               //x = 0, y = 0, src = originalname, uploadedAt = unix date
               //x and y will be defined during the image editing phase 
               const imageSql = `INSERT INTO blogImages
-              (x, y, src, uploadedAt)
-              VALUES (?, ?, ?, ?)`
+              (x, y, src, uploadedAt, userID)
+              VALUES (?, ?, ?, ?, ?)`
 
               const imageValues = [
                 0,
                 0,
                 blogImages[i].originalname,
-                uploadedAt
+                uploadedAt,
+                userID
               ]
 
               const imagesInsert = mysql.format(imageSql, imageValues)
@@ -129,11 +125,12 @@ module.exports = app => {
               
               imageValues = [
                 uploadedAt,
-                req.body.fileName
+                req.body.fileName,
+                userID
               ]
 
               const imageDelete = `DELETE FROM blogImages
-              WHERE uploadedAt = ? AND src = ? LIMIT 1`;
+              WHERE uploadedAt = ? AND src = ? AND userID = ? LIMIT 1`;
             
               const imageQuery = mysql.format(imageDelete, imageValues);
 
@@ -146,25 +143,26 @@ module.exports = app => {
 
             } else {
 
-              filesLength = req.body.fileName.length
+              filesLength = req.body.fileName.length;
 
               //Delete Entries for Deleted Images in Database First
               for (let i = 0; i < filesLength; i++) {
               
                 imageValues =[
                   uploadedAt,
-                  req.body.fileName[i]
+                  req.body.fileName[i],
+                  userID
                 ];
 
                 const imageDelete = `DELETE FROM blogImages
-                WHERE uploadedAt = ? AND src = ? LIMIT 1`;
+                WHERE uploadedAt = ? AND src = ? AND userID = ? LIMIT 1`;
               
                 const imageQuery = mysql.format(imageDelete, imageValues);
 
                 connection.query (imageQuery, (err, result) => {
                     connection.release()
                     if (err) throw (err);
-                    console.log(result)
+                    console.log(result);
                     console.log('Image Entry Deleted');
                 });
                   
@@ -172,45 +170,8 @@ module.exports = app => {
 
             }
 
-            if (typeof deletedFiles === 'string') {
-              const rowSql = 'SELECT * FROM blogImages WHERE uploadedAt = ? AND src = ? LIMIT 1';
-              const rowValues = [uploadedAt, deletedFiles];
-              const query = mysql.format(rowSql, rowValues)
-              connection.query(query, (err, rows) => {
-                  connection.release();
-                  if (err) throw err;
-
-                  if (rows.length === 0) {
-                    fs.unlink(`./public/images/blogImages/${uploadedAt}/${deletedFiles}`, err => {
-                        if (err) {
-                        console.error(err);
-                        } else {
-                        console.log(`File ${deletedFiles} deleted successfully`);
-                        };
-                    });
-                  };
-              });
-            } else {
-              deletedFiles.forEach(file => {
-                const rowSql = 'SELECT * FROM blogImages WHERE uploadedAt = ? AND src = ? LIMIT 1';
-                const rowValues = [uploadedAt, file];
-                const query = mysql.format(rowSql, rowValues)
-                connection.query(query, (err, rows) => {
-                  connection.release();
-                  if (err) throw err;
-
-                  if (rows.length === 0) {
-                      fs.unlink(`./public/images/blogImages/${uploadedAt}/${file}`, err => {
-                      if (err) {
-                          console.error(err);
-                      } else {
-                          console.log(`File ${file} deleted successfully`);
-                      }
-                      });
-                  };
-                });
-              });
-            };
+             //Function imported from functions/blogImageDelete
+             await deleteFiles(connection, uploadedAt, deletedFiles);
     
           };
           
@@ -235,7 +196,7 @@ module.exports = app => {
               updatedDate = ?,
               title = ?,
               fileAmount = fileAmount + ? - ?
-            WHERE uploadedAt = ?;` 
+            WHERE uploadedAt = ? AND userID = ?;` 
 
             blogValues = [
               content,
@@ -243,7 +204,8 @@ module.exports = app => {
               newDate,
               newTitle,
               fileAmount, filesLength,
-              uploadedAt
+              uploadedAt,
+              userID
             ]
 
           //Else for no req.body.fileName
@@ -257,7 +219,7 @@ module.exports = app => {
               updatedDate = ?,
               title = ?,
               fileAmount = fileAmount + ?
-            WHERE uploadedAt = ?;` 
+            WHERE uploadedAt = ? AND userID = ?;` 
 
             blogValues = [
               content,
@@ -265,12 +227,13 @@ module.exports = app => {
               newDate,
               newTitle,
               fileAmount,
-              uploadedAt
+              uploadedAt,
+              userID
             ]
           }       
 
           //Query Formatting for Blog Update
-          const updateQuery = mysql.format(update, blogValues)
+          const updateQuery = mysql.format(update, blogValues);
 
           //Update Content
           connection.query (updateQuery, (err, result) => {

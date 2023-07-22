@@ -1,24 +1,18 @@
 //Express
-const express = require('express')
+const express = require('express');
 
-//uuid for unique token generation
-const crypto = require('crypto')
-
-//Base Functions
-const functions = require('./function')
-
-    //Authentication 
-    const checkAuthenticated = functions.checkAuthenticated
+//Authentication 
+const { checkAuthenticated } = require('../engines/functions/function');
 
 //Mysql Functionality
-const mysql = require('mysql2')
+const mysql = require('mysql2');
 
 //Database Configuration
-const database = require('./database')
-const db = database.db
+const { db } = require('../database');
 
-//FS for File Directory Pathing
-const fs = require('fs')  
+//Get the UserID dynamically 
+require('dotenv').config();
+const userID = process.env.ID;
 
 module.exports = app => {
 
@@ -38,9 +32,9 @@ module.exports = app => {
                                       WHEN featured = 0 THEN 1 
                                       ELSE 0 
                                     END
-                                    WHERE uploadedAt = ?`;
+                                    WHERE uploadedAt = ? AND userID = ?`;
 
-              const featureUpdate = mysql.format(featureQuery, [date]);
+              const featureUpdate = mysql.format(featureQuery, [date, userID]);
 
               connection.query(featureUpdate, (err, result) => {
                 connection.release();

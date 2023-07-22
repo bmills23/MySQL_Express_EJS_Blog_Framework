@@ -2,30 +2,21 @@
  
 <div class="title container">
     <h1 class="d-flex justify-content-center">
-    
-    <% if (!isAuthenticated) { %> 
-
-        <%= "Website Name" %>
-    
+    <% if (!isAuthenticated) { %>     
+    <%= NAME %>
     <% } else { %>
-
-        <!--Can link up to MySQL User Data-->
-
-        <%= "Welcome, User!" %>
-
+    <%= NAME %>
     <% } %> 
     </h1>
 </div>
 
-<div class="index-images">
-    <% for (let i = 1; i <= aboutMe[0].fileAmount; i++) { %>
-        <img class="index-image" src="/images/index/banner/<%=i%>.jpeg"
-        style= "width: calc(100% / <%= aboutMe[0].fileAmount %>)"
-        alt="Banner Image <%=i%>">
-    <% } %>
-</div>
-
 <div class="container-fluid index-page">
+
+    <div class="index-images">
+
+        <%-aboutMe[0].bannerContent %>
+        
+    </div>
 
     <div class="about-me container">
 
@@ -37,17 +28,26 @@
         <h2>Featured Blogs</h2>
         <div class="row mx-auto justify-content-center">
             <% for (let i = 0; i < blogs.length; i++) { %> 
-                <% if (blogs[i].featured) { %> 
+                <% if (blogs[i].featured && blogs[i].fileAmount > 0) { %> 
                     <div class="img">
                         <h3 class="index-title"><%= blogs[i].title %></h3>
-                        <a href="/blog/<%= blogs[i].id %>"><img class="img-fluid feature-photo" src="/images/blogImages/<%=blogs[i].uploadedAt%>/<%=images[i].src%>" alt="Featured Blog Photo"></a>
+                        <a href="/blog/<%= blogs[i].id %>"><img class="img-fluid feature-photo" src="https://<%BUCKETNAME%>.s3.amazonaws.com/blogImages/<%=blogs[i].uploadedAt%>/<%=images[i].src%>" alt="Featured Blog Photo"></a>
                     </div>
-                <% } %> 
+                <% } else { %>
+                    <div class="img">
+                        <h3 class="index-title"><%= blogs[i].title %></h3>
+                        <a href="/blog/<%= blogs[i].id %>">
+                            <img class="img-fluid feature-photo"
+                            src="/assets/blog<%= Math.floor(Math.random() * 5) + 1 %>.jpg"
+                            alt="Featured Blog Photo">
+                        </a>
+                    </div>
+                <% } %>
             <% } %> 
         </div>
     </div>
 
-    <div class="about-me-date container-fluid">
+    <div class="about-me-date container">
         <% if (aboutMe[0].uploadedAt != aboutMe[0].updatedDate) { %> 
             <span class="update">Home Page Last Updated On <%= timeConverter(aboutMe[0].updatedDate) %> </span>
         <% } %> 

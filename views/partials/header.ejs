@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
 
-    <!--Icon, favicon.ico can be what you want-->
+    <!--Icon-->
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
 
     <!--Dynamic Pathing For Bootstrap Modules-->
@@ -25,7 +25,7 @@
     <link class="stylesheet" rel="stylesheet" href="/app.css">
 
     <!--Deals with Pages that Require Dragging Script-->
-    <% if (originalUrl.includes(...['Edit'])) { %>
+    <% if (originalUrl.includes('blogEdit') || originalUrl.includes('blogStep2') || originalUrl.includes('editAboutMe')) { %>
         <link rel="stylesheet" href="/js/drag/drag.css">
     <% } %>
 
@@ -83,15 +83,17 @@
                     >Edit Individual Blogs</a>
                 </li>
                 <li class="nav-item align-items-end">
+                    <% if (isAuthenticated) { %>
                     <form action="/logout?_method=DELETE" method="POST" class="form-group text-center align-items-center justify-content-center">
                         <button type="submit" class="btn login">
-                            <% if (isAuthenticated) { %>
-                            <%= "Logout" %>
-                            <% } else { %> 
-                            <%= "Log In" %> 
-                            <% } %> 
+                            Log Out
                         </button>
                     </form>  
+                    <% } else { %>
+                    <div class="form-group text-center align-items-center justify-content-center">
+                        <a class="nav-link" href="/login">Log In</a>
+                    </div>  
+                    <% } %>
                 </li>
                 
             </ul>

@@ -12,34 +12,34 @@ app.use((req, res, next) => {
 
 /* Temporary About Me Seed (Can Use This Format to Seed Any
     Empty Database or just use console/workbench) */
-    app.post('/aboutMePost', checkAuthenticated, (req, res) => {
-        try {
-            const content = req.body.aboutMePost
-            const date = Date.now().toString()
-            const updatedDate = Date.now().toString()
+
+app.post('/aboutMePost', checkAuthenticated, (req, res) => {
+    try {
+        const content = req.body.aboutMePost
+        const date = Date.now().toString()
+        const updatedDate = Date.now().toString()
+
+        db.getConnection( async (err, connection) => {
+        if (err) throw (err)
+        const sqlInsert = "INSERT INTO aboutme VALUES (?,?,?)"
+        const insertQuery = mysql.format(sqlInsert,[content, date, updatedDate]) //update doesn't work, rename
     
-            db.getConnection( async (err, connection) => {
+        await connection.query (insertQuery, (err, result)=> {
+            connection.release()
             if (err) throw (err)
-            const sqlInsert = "INSERT INTO aboutme VALUES (?,?,?)"
-            const insertQuery = mysql.format(sqlInsert,[content, date, updatedDate]) //update doesn't work, rename
-        
-            await connection.query (insertQuery, (err, result)=> {
-                connection.release()
-                if (err) throw (err)
-                console.log('About Me posted!')
-            })
-            }) //end of connection.query()
-            //end of db.getConnection()
-            res.redirect('/aboutMe')
-        } catch {
-        res.redirect('/editAboutMe')
-        console.log('ERROR')
-        }
-    })
-    
+            console.log('About Me posted!')
+        })
+        }) //end of connection.query()
+        //end of db.getConnection()
+        res.redirect('/aboutMe')
+    } catch {
+    res.redirect('/editAboutMe')
+    console.log('ERROR')
+    }
+})
 
 //Optional Registration Form
-  app.post('/register', async (req, res) => { //bcrypt is async library
+app.post('/register', async (req, res) => { //bcrypt is async library
   
     try {
       
@@ -78,11 +78,10 @@ app.use((req, res, next) => {
        }) //end of connection.query()
        }) //end of db.getConnection()
       res.redirect('/login')
-    } catch {
+    } catch
     res.redirect('/register')
     }
   })
-
 
 //   *this section is intended to parse out x and y coordinates for each image
 //   *as mentioned later, this functionality is temporarily unavailable
