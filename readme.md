@@ -103,7 +103,7 @@ DB_URL will be the URL given by your respective db service.
 
 PORT will be used for the app.listen() function at the end of index.js in the root directory.  This will be provided by whatever service you use.  For instance, I use fly.io which defaults to '0.0.0.0:8080' 
 
-The bext six variables are keys from your AWS bucket.
+The next six variables are keys from your AWS bucket.
 
 ID = the autoincrementing ID from the user database. We will create a user in the next step.
 
