@@ -12,8 +12,6 @@ Set up a remote MySQL database.  I used Planetscale DB. Setup like this.
 
 <img width="1509" alt="Screen Shot 2023-09-16 at 3 39 37 PM" src="https://github.com/bmills23/MySQL_Express_EJS_Blog_Framework/assets/58231400/f32bb726-32c5-443c-b546-40f6aa239b23">
 
-<img width="1470" alt="Screen Shot 2023-09-16 at 3 40 51 PM" src="https://github.com/bmills23/MySQL_Express_EJS_Blog_Framework/assets/58231400/68be6651-1e48-4827-b23a-cd81218feffb">
-
 <img width="1481" alt="Screen Shot 2023-09-16 at 3 40 41 PM" src="https://github.com/bmills23/MySQL_Express_EJS_Blog_Framework/assets/58231400/7eafa0f1-5b70-4f42-80ae-3ec2a92e0c0b">
 
 <img width="1481" alt="Screen Shot 2023-09-16 at 3 40 29 PM" src="https://github.com/bmills23/MySQL_Express_EJS_Blog_Framework/assets/58231400/b8ddc565-bab2-41b7-9710-a5b6cd4cb5ef">
@@ -25,3 +23,6 @@ Set up a remote MySQL database.  I used Planetscale DB. Setup like this.
 <img width="1486" alt="Screen Shot 2023-09-16 at 3 40 07 PM" src="https://github.com/bmills23/MySQL_Express_EJS_Blog_Framework/assets/58231400/c5babcf3-0654-4106-8600-5b6fd96292c2">
 
 <img width="1472" alt="Screen Shot 2023-09-16 at 3 40 18 PM" src="https://github.com/bmills23/MySQL_Express_EJS_Blog_Framework/assets/58231400/12dd5260-e579-44f8-82ff-4592d0cae5ab">
+
+<img width="1157" alt="Screen Shot 2023-09-16 at 4 18 30 PM" src="https://github.com/bmills23/MySQL_Express_EJS_Blog_Framework/assets/58231400/9cfa384d-d237-44bb-be81-f8364cae4899">
+
