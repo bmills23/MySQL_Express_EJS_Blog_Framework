@@ -4,6 +4,8 @@ html {
 }
 
 body {
+    display: flex;
+    flex-direction: column;
     height: auto;
     width: auto;
     min-height: 100%;
@@ -13,13 +15,13 @@ body {
 }
 
 h1 {
-    color: #4b5896;
+    /* color */   
     margin-top: 4rem;
     font-family: 'Roboto', sans-serif;
 }
 
 h2 {
-    color: #4b5896;
+    /* color */
     font-family: 'Roboto', sans-serif;
 }
 
@@ -27,17 +29,23 @@ a, p, label, input, span {
     font-family: 'Roboto', sans-serif;
 }
 
+/* For main container div, give the main container a margin-bottom for the footer */
+.main {
+    overflow-x: hidden;
+    margin-bottom: 100px;
+}
+
 /*Inputs*/
 input::file-selector-button {
     color: #FFF;
-    background-color: #4b5896;
+    /* background-color */
     font-family: 'Roboto', sans-serif;
     font-size: 0.93rem;
 }
 
 input::file-selector-button:hover {
+    /* background-color */
     cursor: pointer;
-    background-color: #7882B1;
 }
 
 /*Nav*/
@@ -47,12 +55,12 @@ input::file-selector-button:hover {
     font-family: 'Roboto', sans-serif;
 }
 
-.navbar {
-    background-color: #4B5896;
-}
-
 .user-only {
     color: orange;
+}
+
+#navbar-color-label {
+    color: white;
 }
 
 /*Index Page*/
@@ -73,7 +81,8 @@ input::file-selector-button:hover {
 }
 
 .index-images {
-    width: 100%;
+    width: 100vw;    
+    box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -82,7 +91,6 @@ input::file-selector-button:hover {
 
 .index-image {
     flex: 1;
-    width: auto;
     height: 100%;
     margin: 0;
     object-fit: cover;
@@ -129,10 +137,10 @@ input::file-selector-button:hover {
 /*About Me and Blog Content*/
 
 .about-me {
-    background-color: #A6A089;
     padding: 1.5rem;
     border: 2px double black;
     margin-top: 1.5rem;
+    text-align: justify;
 }
 
 .about-me-date {
@@ -140,13 +148,31 @@ input::file-selector-button:hover {
     margin-bottom: 1rem;
 }
 
+#about-me-color {
+    margin-left: 1.5rem;
+    margin-right: auto;
+    max-width: 200px;
+}
+
+#navbar-color {
+    margin-left: auto;
+    margin-right: 1.5rem;
+    max-width: 200px;
+}
+
 .blog-content, .about-me-content {
     display: flex;
     flex-wrap: wrap;
  }
 
+ .blog-listing {
+    padding: 1rem;
+    margin-top: 1rem;
+ }
+
 .blog-post {
-    border: 2px solid #4b5896;
+    /* border */
+    border: 2px solid;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
 }
@@ -170,7 +196,7 @@ input::file-selector-button:hover {
 }
 
 #new-blog {
-    color: #4b5896;
+    /* color */
 }
 
 /* Dragndrop.js */
@@ -180,16 +206,33 @@ input::file-selector-button:hover {
 
 /*Images*/
 
-.img-fluid {
-    object-fit: cover;
-    height: auto;
-    /* Add the -webkit- prefix for Safari compatibility */
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Spacing between images */
+    margin: 2rem;
+    margin-bottom: 4rem;
 }
 
-.gallery {
-    margin: auto;
+.gallery-item {
+    flex: 1 1 400px;
+    position: relative;
+    width: 400px;
+}
+
+.gallery-item::before {
+    content: "";
+    display: block;
+    padding-top: 100%; /* This ensures height equals width, creating a square */
+}
+
+.gallery-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .gallery-image:hover {
@@ -354,12 +397,12 @@ p {
 }
 
 .submit-blog, .delete-post, .submit-edits, .delete, .captions-update, .feature-button, #undo-banner-upload, #undo-content-upload {
+   /* background-color */
     max-width: 200px;
     font-family: 'Roboto', sans-serif;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     color: #fff;
-    background-color: #4b5896;
 }
 
 #submit-edits-button {
@@ -375,14 +418,10 @@ p {
 }
 
 .unfeature-button, #true-delete {
+    /* background-color complement */
     font-family: 'Roboto', sans-serif;
     margin: 0.5rem;
     color: #fff;
-    background-color: #96894B;
-}
-
-.unfeature-button:hover {
-    background-color: #96894B;
 }
 
 .feature-photo {
@@ -395,12 +434,6 @@ p {
 
 .feature-photo:hover {
     transform: scale(1.1)
-}
-
-.submit-blog:hover, .delete-post:hover, 
-.submit-edits:hover, .feature-button:hover,
-#undo-banner-upload:hover, #undo-content-upload:hover  {
-    background-color: #D2D6E5;
 }
 
 /*Photo Upload Stuff*/
@@ -497,10 +530,6 @@ p {
     font-family: 'Roboto', sans-serif;
 }
 
-.login:hover {
-    color: #ecececdc;
-}
-
 .navbar-toggler {
     border-color: white;
 }
@@ -511,4 +540,24 @@ p {
 
 #editable {
     width: 100%;
+}
+
+footer {
+    background-color: white;
+    flex-shrink: 0;
+    flex-grow: 0;
+    padding: 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.text-muted {
+    height: 100%;
+    width: 100%;
+}
+
+.social-icon {
+    float: right;
+    height: 16px;
+    width: 16px;
 }

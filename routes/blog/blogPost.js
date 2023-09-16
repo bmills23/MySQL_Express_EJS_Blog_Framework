@@ -39,7 +39,9 @@ module.exports = app => {
 
           console.log('POST Method blogInput');
 
-          console.log(req.body)
+          console.log(req.files);
+
+          console.log(req.body);
          
           /*Generate a token to pass to next blogInput page;
           this will ensure that client cannot return to the previous page at any point;
@@ -61,7 +63,7 @@ module.exports = app => {
           */
           
           content.replace(/<(?!\/?(div|br)\b)[^>]*>/gi, '');
-      
+
           //Unix Time Stamp value; if never edited, update will always be date
           const uploadedAt = req.body.date;
           const update = req.body.date;

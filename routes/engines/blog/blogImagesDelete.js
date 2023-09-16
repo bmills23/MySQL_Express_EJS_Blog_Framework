@@ -2,7 +2,7 @@
 require('dotenv').config()
 
 //S3 Specific Classes
-const { S3Client, DeleteObjectCommand, ListObjectsV2Command } = require('@aws-sdk/client-s3');
+const { S3Client, DeleteObjectCommand, DeleteObjectsCommand, ListObjectsV2Command } = require('@aws-sdk/client-s3');
 
 const s3 = new S3Client({
   region: process.env.REGION,
@@ -18,15 +18,22 @@ async function deleteBlogKey(subdirectory, object, deleteAll, callback) {
 
   if (deleteAll) {
 
+    console.log('Deleting all Photos in S3 Subdirectory')
+
     const deleteParams = {
       Bucket: bucketName,
-      Key: `blogImages/${subdirectory}/`,
+      Prefix: `blogImages/${subdirectory}/`
     };
+
+    console.log(deleteParams)
 
     // List all objects with the specified prefix
     const listResult = await s3.send(new ListObjectsV2Command(deleteParams));
-    const objectsToDelete = listResult.Contents.map((object) => ({
-      Key: object.Key,
+
+    console.log(listResult);
+
+    const objectsToDelete = listResult.Contents.map((obj) => ({
+      Key: obj.Key,
     }));
 
     if (objectsToDelete.length === 0) {
@@ -36,6 +43,7 @@ async function deleteBlogKey(subdirectory, object, deleteAll, callback) {
       }
       return;
     }
+  
 
     // Delete all objects found in the list
     const deleteObjectsParams = {
@@ -46,7 +54,8 @@ async function deleteBlogKey(subdirectory, object, deleteAll, callback) {
       },
     };
   
-    await s3.send(new DeleteObjectCommand(deleteObjectsParams));
+    await s3.send(new DeleteObjectsCommand(deleteObjectsParams));
+
     console.log(`Successfully deleted objects with prefix: blogImages/${subdirectory}/`);
 
     if (callback) callback();

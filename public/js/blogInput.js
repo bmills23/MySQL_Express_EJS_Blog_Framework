@@ -4,7 +4,7 @@
 //Editable declared in drag.js
 
 const contentEditable = document.querySelector('.content-editable');
-const submitBlog = document.querySelector('.submit-blog')
+const submitBlog = document.querySelector('.submit-blog');
 
 //Submission of Content Editable Divs 
 

@@ -13,7 +13,7 @@ const deleteButton = document.getElementById("delete-button");
 //Div Parent
 const editable = document.getElementById("editable");
 //Select All Divs that are the children of editable
-const paragraphs = editable.querySelectorAll('div');
+const paragraphs = editable.querySelectorAll('p, div');
 
 //Content Editable Div Variables
 let editableRect = editable.getBoundingClientRect();

@@ -62,6 +62,7 @@ module.exports = app => {
               const aboutMe = result;
 
               connection.query (bannerImageSearch, (err, result) => {
+                if (err) throw (err);
 
                 const bannerImages = result;
 
@@ -84,7 +85,7 @@ module.exports = app => {
                       res.render('index', 
     
                         {
-    
+
                           aboutMe, 
                           bannerImages,
                           aboutMeImages,
@@ -99,14 +100,15 @@ module.exports = app => {
     
                         });  
     
-                      });
+                    }); // End blogimage search query 
     
-                  });    
+                  }); // End blog search query 
   
-                });
-              })
+                }); // End aboutme content image query 
 
-            });
+              }); // End bannerimage query 
+
+            }); // End aboutme data query 
 
         });
 
@@ -158,7 +160,7 @@ module.exports = app => {
 
         console.log('PUT Method AboutMeUpdate');
 
-        console.log(req.body)
+        console.log(req.body);
 
         /*Generate a token to pass to next blogInput2 page;
         this will ensure that client cannot return to the previous page at any point;
@@ -236,6 +238,15 @@ module.exports = app => {
 
         //Previous File Amounts for Next Editing Page, if applicable
         const aboutMeFileField = req.body.aboutMeFileField;
+
+        //BannerContent
+        const bannerContent = req.body.bannerContent;
+
+        //AboutMeColor
+        const color = req.body.aboutMeColor;
+
+        //User's Theme => goes to User Table
+        const userTheme = req.body.trueColor;
 
         await new Promise ((resolve,reject) => {
 
@@ -413,38 +424,54 @@ module.exports = app => {
         
           }
 
-            const update = 
-            `UPDATE aboutme SET 
-              content = ?,
-              updatedDate = ?,
-              fileAmount = fileAmount + ? - ?,
-              aboutMeFiles = aboutMeFiles + ? - ?
-            WHERE userID = ?;`
+          const userColorUpdate = 
+          `UPDATE user SET navColor = ? WHERE userID = ?`
 
-            const values = [
-              content,
-              newDate, 
-              fileAmount,
-              deletedBannerImagesAmount,
-              aboutMeFiles,
-              deletedAboutMeImagesAmount,
-              //bannerContent defined in next step
-              userID
-            ] 
+          const userValues = [userTheme, userID];
 
-            console.log(values)
+          const userUpdate = mysql.format(userColorUpdate, userValues);
 
-            const aboutMeContentUpdate = mysql.format(update, values);
-    
-            connection.query (aboutMeContentUpdate, (err, result) => {
+          connection.query (userUpdate, (err, result) => {
+            console.log(result);
+            connection.release();
+            if (err) reject (err);
+          });
 
-              console.log(result);
+          const update = 
+          `UPDATE aboutme SET 
+            content = ?,
+            updatedDate = ?,
+            fileAmount = fileAmount + ? - ?,
+            aboutMeFiles = aboutMeFiles + ? - ?,
+            bannerContent = ?,
+            aboutMeColor = ?
+          WHERE userID = ?;`
 
-              connection.release();
-              if (err) reject(err);
-              return resolve(result);
-              
-            })
+          const values = [
+            content,
+            newDate, 
+            fileAmount,
+            deletedBannerImagesAmount,
+            aboutMeFiles,
+            deletedAboutMeImagesAmount,
+            bannerContent,
+            color,
+            userID
+          ] 
+
+          console.log(values);
+
+          const aboutMeContentUpdate = mysql.format(update, values);
+  
+          connection.query (aboutMeContentUpdate, (err, result) => {
+
+            console.log(result);
+
+            connection.release();
+            if (err) reject(err);
+            return resolve(result);
+            
+          })
 
         })
 

@@ -28,6 +28,9 @@ const { db } = require('./routes/database');
 //Passport & Passport Config
 const initializePassport = require('./passport-config');
 
+//Color Functions
+const { getTextColor } = require('./routes/engines/functions/luminance');
+ 
 //Fetches User Data from DB for Passport 
 initializePassport(
   passport,
@@ -99,6 +102,49 @@ app.use(passport.session());
 //Method Override for Post because DELETE is non functional in express, see Logout for example
 //Need this to create RESTful routes in express 
 app.use(methodOverride('_method'));
+
+app.use(async (req, res, next) => {
+  return new Promise((resolve, reject) => {
+    db.getConnection((err, connection) => {
+      if (err) reject(err);
+
+      const query = "SELECT * FROM user WHERE userID = ?;";
+      const search = mysql.format(query, userID);
+
+      connection.query(search, (err, results) => {
+        connection.release(); 
+
+        if (err) reject(err);
+
+        const user = results;
+
+        res.locals.user = user;
+
+        res.locals.socialData = user[0].social;
+
+        res.locals.year = new Date().getFullYear();
+
+        res.locals.getTextColor = getTextColor;
+
+        res.locals.bucket = process.env.BUCKET;
+
+        console.log(res.locals.user);
+
+        // Call next() inside the promise's then block
+        resolve();
+      });
+    });
+  })
+  .then(() => {
+    next(); // Call next() after the promise resolves
+  })
+  .catch((err) => {
+    // Handle errors
+    console.error(err);
+    next(err); // Pass the error to the next middleware
+  });
+});
+
 
 //JS Imports
 const authGets = require('./routes/auth/authGets'); //auth Includes Login & Register

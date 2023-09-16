@@ -3,32 +3,29 @@
 //Div of Gallery Images
 const imageParent = document.querySelectorAll('.img')
 
-//For Each Div of ImageParent, add these confusing bootstrap classes
-for (let div of imageParent) {
-    div.classList.add('col-xl-4', 'col-lg-6', 'col-md-6', 'col-sm-10', 'col-9')
-}
+//Logic for Dynamic Gallery Content
 
+//Designate a modal target for the clicked image
 const modal = document.querySelector(".modal");
 
+//Designate constant for all other potential modals to remove active class
 const modals = document.querySelectorAll(".modal");
 
+//Designate constant for image div containers 
 const carouselItems = document.querySelectorAll(".carousel-item");
 
-const modalImg = document.querySelector(".modal-content");
-
-const modalCaption = document.querySelector(".caption");
-
+//Designate constant for all gallery images outside of carousel functionality
 const galleryImages = document.querySelectorAll('.gallery-image');
 
 galleryImages.forEach(galleryImage => {
     galleryImage.addEventListener('click', () => {
-        let matchFound = false; // Flag variable to track if a match has been found
+        let matchFound = false; //Flag variable to track if a match has been found
         carouselItems.forEach(carouselItem => {
             if (!matchFound && galleryImage.src === carouselItem.firstElementChild.src) {
-                carouselItem.classList.add('active'); // Add 'active' class to the matching item
-                matchFound = true; // Set the flag to true to indicate a match has been found
+                carouselItem.classList.add('active'); //Add 'active' class to the matching item
+                matchFound = true; //Set the flag to true to indicate a match has been found
             } else {
-                carouselItem.classList.remove('active'); // Remove 'active' class from other items
+                carouselItem.classList.remove('active'); //Remove 'active' class from other items
             }
         });
     });

@@ -1,21 +1,21 @@
 {
   "name": "mysql_express_ejs_blog_framework",
   "version": "1.0.0",
-  "description": "Website design framework with node",
+  "description": "bryan's",
   "main": "index.js",
   "scripts": {
-    "devStart": "nodemon index.js"
+    "devStart": "node index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bmills23/MySQL_Express_EJS_Blog_Framework.git"
+    "url": "git+https://github.com/bmills23/MYSQL_Express_EJS_Blog_Framework.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/bmills23/MySQL_Express_EJS_Blog_Framework.git"
+    "url": "https://github.com/bmills23/MYSQL_Express_EJS_Blog_Framework/issues"
   },
-  "homepage": "https://github.com/bmills23/MySQL_Express_EJS_Blog_Framework#readme",
+  "homepage": "https://github.com/bmills23/MYSQL_Express_EJS_Blog_Framework#readme",
   "dependencies": {
     "@aws-sdk/client-cognito-identity": "^3.328.0",
     "@aws-sdk/client-s3": "^3.328.0",

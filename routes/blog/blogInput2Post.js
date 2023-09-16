@@ -24,6 +24,8 @@ module.exports = app => {
 
       console.log('POST Method BlogInput2');
 
+      console.log(req.body);
+
       //Shared AboutMe and Blog Variables
 
       //True Content with Correct Image Locations 
@@ -34,10 +36,7 @@ module.exports = app => {
 
       //Unix Timestamp value, matches database
       const uploadedAt = req.body.date;    
-      
-      //Setup Delete Fileslength Variable
-      let filesLength;
-
+    
       // If we're doing aboutme and not a blog...
       if (req.body.aboutme) {
 
@@ -47,18 +46,30 @@ module.exports = app => {
         // Setup Variables for Deleted Files
         // Deleted Banner Files
         let deletedBannerImagesAmount = 0;
-        const deletedBannerImages = req.body.fileNameBanner
+        const deletedBannerImages = req.body.fileNameBanner;
+
+        console.log(deletedBannerImages)
 
         if (deletedBannerImages) {
-          deletedBannerImagesAmount = deletedBannerImages.length;
+          if (typeof deletedBannerImages === "string") {
+            deletedBannerImagesAmount = 1
+          } else {
+            deletedBannerImagesAmount = deletedBannerImages.length;
+          }
         }
 
         // Deleted About Me Files
         let deletedAboutMeImagesAmount = 0;
         const deletedAboutMeImages = req.body.fileName;
 
+        console.log(deletedAboutMeImages)
+
         if (deletedAboutMeImages) {
-          deletedAboutMeImagesAmount = deletedAboutMeImages.length;
+          if (typeof deletedAboutMeImages === "string") {
+            deletedAboutMeImagesAmount = 1
+          } else {
+            deletedAboutMeImagesAmount = deletedAboutMeImages.length;
+          }
         }
 
         //Connect to Mysql
@@ -72,9 +83,12 @@ module.exports = app => {
               //Setup array to delete image entries
               let imageValues;
 
-              if (typeof aboutMeImages === 'string') {
-                
-                imageValues = [req.body.fileName, userID];            
+              if (typeof deletedAboutMeImages === 'string') {
+
+                console.log("Single About Me Images Detected for Deletion");
+                 
+                imageValues = [req.body.fileName, userID];    
+                console.log(imageValues);
 
                 const imageDelete = `DELETE FROM aboutMeImages 
                 WHERE imageType = 'aboutMeImage' AND src = ? AND userID = ? LIMIT 1`;
@@ -90,12 +104,13 @@ module.exports = app => {
 
               } else {
 
-                filesLength = req.body.fileName.length
-
                 //Delete Entries for Deleted Images in Database First
-                for (let i = 0; i < filesLength; i++) {
+                for (let i = 0; i < deletedAboutMeImagesAmount; i++) {
+
+                  console.log("Multiple About Me Images Detected for Deletion");
                 
                   imageValues = [req.body.fileName[i], userID];
+                  console.log(imageValues);
 
                   const imageDelete = `DELETE FROM aboutMeImages
                   WHERE imageType = 'aboutMeImage' AND src = ? AND userID = ? LIMIT 1`;
@@ -114,7 +129,7 @@ module.exports = app => {
               }
 
               //Function imported from functions/blogImageDelete
-              await deleteImages('aboutMeImage', connection, deletedAboutMeImages)
+              await deleteImages('aboutMeImage', 'aboutme', connection, deletedAboutMeImages)
       
             } 
             
@@ -123,7 +138,7 @@ module.exports = app => {
               //Setup array to delete image entries
               let imageValues = [];
 
-              if (typeof bannerImages === 'string') {
+              if (typeof deletedBannerImages === 'string') {
                 
                 imageValues = [req.body.fileNameBanner, userID];
 
@@ -141,10 +156,8 @@ module.exports = app => {
 
               } else {
 
-                filesLength = req.body.fileNameBanner.length
-
                 //Delete Entries for Deleted Images in Database First
-                for (let i = 0; i < filesLength; i++) {
+                for (let i = 0; i < deletedBannerImagesAmount; i++) {
                 
                   imageValues = [req.body.fileNameBanner[i], userID];
 
@@ -165,7 +178,7 @@ module.exports = app => {
               }
 
               //Function imported from functions/blogImageDelete
-              await deleteImages('bannerImage', connection, deletedBannerImages)
+              await deleteImages('bannerImage', 'banner', connection, deletedBannerImages)
           
             }
 
@@ -342,7 +355,7 @@ module.exports = app => {
 
         //Redirects to non-public blog list
         res.redirect('/blogEditList');
-
+        
       };  
 
     } catch {

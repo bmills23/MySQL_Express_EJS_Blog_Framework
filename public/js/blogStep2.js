@@ -8,25 +8,8 @@ const contentEditable = document.querySelector('.content-editable');
 const bannerContent = document.querySelector('#banner-content');
 const indexImages = document.querySelector('.index-images');
 
-/* 
-    This event fires if the user accidentally navigates away from the webpage and auto
-    submits the form in the last spot the user left it
-*/
-
-window.addEventListener('beforeunload', (event) => {
-    event.preventDefault();
-    event.returnValue = ''; //This is required for Chrome and newer browsers
-  
-    const form = document.querySelector('.auto-submit');
-    if (form) {
-      const formData = new FormData(form);
-  
-      fetch(form.action, {
-        method: form.method,
-        body: formData
-      }).catch(console.error);
-    }
-});
+//Submit Edits Button
+const submitEdits = document.querySelector('.submit-edits');
 
 //Submission of Content Editable Divs 
 function submit() {
@@ -50,3 +33,7 @@ function submitForms() {
     formSubmitted = true;
     submit();
 }
+
+// Else form is submitted normally
+
+submitEdits.addEventListener('click', submitForms);

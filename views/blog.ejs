@@ -4,11 +4,11 @@
     <h1 class="d-flex justify-content-center">Blog Input</h1>
 </div>
 
-<div class="d-flex justify-content-center">
+<div class="main d-flex justify-content-center">
 
     <div class="blogs container">
         <h2 id="new-blog">New Blog Input</h2>
-        <div class="container blog-post">
+        <div class="container blog-post shadow rounded">
             <form action="/blogInput" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                         
@@ -37,11 +37,13 @@
                 </div>
             </form>
         </div>
-
+    </div>
 </div>
 
 <!--Kept for Time Counter-->
 <script src="/js/blogInput.js"></script>
+
+<script src="/js/luminance.js"></script>
 
 <%-include('partials/footer')%>
 

@@ -16,7 +16,7 @@
     <% const maxDate = Math.max(...unixArr) %> 
     <% let i = unixArr.findIndex(value => value === maxDate); %>
 
-    <div class="editing-group form-group container-fluid">
+    <div class="main editing-group form-group container-fluid shadow rounded">
 
         <h2><%= blog[i].title %></h2>
 
@@ -28,24 +28,25 @@
 
             onsubmit="return confirm('Are you sure you want to submit these photo edits?')"
             
-            class="editing-form"
+            class="editing-form auto-submit"
 
             ><!--End of Form Opening Tag-->
             
             <!--Editable for drag.js, content-editable for blogStep2.js-->
             <!--Render only blog content, not true content due to image uploading scheme-->
+            
             <div class="form-control content-editable" id="editable" contenteditable="true">
 
                 <% if (!blog[i].trueContent) { %>
-                    <%- blog[i].content %>
+                    <div>><%- blog[i].content %></div>
                 <% } else { %>
-                    <%- blog[i].trueContent %>
+                    <div><%- blog[i].trueContent %></div>
                 <% } %>
 
                 <% if (newBlog) { %>
                     <% for (let j = 1; j <= blog[i].fileAmount; j++) { %> 
                         <img id="image_<%=j%>" class="img-fluid draggable-resizable-image" 
-                        src="https://<%BUCKETNAME%>.s3.amazonaws.com/blogImages/<%=blog[i].uploadedAt%>/<%=images[j-1].src%>"
+                        src="https://<%=bucket%>.s3.amazonaws.com/blogImages/<%=blog[i].uploadedAt%>/<%=images[j-1].src%>"
                         alt="Blog Photo <%= j %>" onclick="event.stopPropagation()">
 
                         <div id="image_input_<%=j%>">
@@ -57,7 +58,7 @@
                 <% } else { %>
                     <% for (let j = (blog[i].fileAmount - newFiles); j < (blog[i].fileAmount); j++) { %> 
                         <img id="image_<%=j%>" class="img-fluid draggable-resizable-image" 
-                        src="https://<%BUCKETNAME%>.s3.amazonaws.com/blogImages/<%=blog[i].uploadedAt%>/<%=images[j].src%>"
+                        src="https://<%=bucket%>.s3.amazonaws.com/blogImages/<%=blog[i].uploadedAt%>/<%=images[j].src%>"
                          alt="Blog Photo <%= j %>" onclick="event.stopPropagation()">
                     
                         <div id="image_input_<%=j%>">
@@ -102,70 +103,74 @@
 
 <% } else { %>
 
-    <form class="editing-form auto-submit" action="/blogInput2" method="POST" onsubmit="return confirm('Are you sure you want to submit these photo edits?')">
+    <div class="main editing-group form-group container-fluid">
 
-        <div class="container index-page">
+        <form class="editing-form auto-submit" action="/blogInput2" method="POST" onsubmit="return confirm('Are you sure you want to submit these photo edits?')">
 
-            <div class="index-images">
-                <% for (let i = 0; i < aboutMe[0].fileAmount; i++) { %>
-                    <img class="index-image"
-                    id="banner-image-<%= i + 1 %>"
-                    src="https://<%BUCKETNAME%>.s3.amazonaws.com/index/banner/<%= bannerImages[i].src %>"
-                    alt="Banner Image <%= i + 1 %>"
-                    style="width: 100%/<%= aboutMe[0].fileAmount %>;">
-                <% } %>
-            </div>
+            <div class="container index-page">
 
-            <!--Trash Can Icon-->
-            <div id="trash-can" class="hidden"></div>
+                <div class="index-images">
+                    <% for (let i = 0; i < aboutMe[0].fileAmount; i++) { %>
+                        <img class="index-image"
+                        id="banner-image-<%= i + 1 %>"
+                        src="https://<%=bucket%>.s3.amazonaws.com/index/banner/<%= bannerImages[i].src %>"
+                        alt="Banner Image <%= i + 1 %>"
+                        style="width: 100%/<%= aboutMe[0].fileAmount %>;">
+                    <% } %>
+                </div>
 
-            <div class="about-me container-fluid content-editable" id="editable">
+                <!--Trash Can Icon-->
+                <div id="trash-can" class="hidden"></div>
+
+                <div class="about-me container-fluid content-editable" id="editable">
+            
+                    <%- aboutMe[0].content %>
+
+                    <% if (oldAboutMeFiles == 0) { %>
+
+                        <% for (let i = 0; i < aboutMe[0].aboutMeFiles; i++) { %>
+                            <img class="about-me-image img-fluid draggable-resizable-image" 
+                            src="https://<%=bucket%>.s3.amazonaws.com/index/aboutme/<%= aboutMeImages[i].src %>" 
+                            alt="About Me Image <%= i + 1 %>">
+                        <% } %>
+
+                    <% } else { %>
+
+                        <% for (let i = (aboutMe[0].aboutMeFiles - oldAboutMeFiles) + 1; i < aboutMe[0].aboutMeFiles; i++) { %>
+                            <img class="about-me-image img-fluid draggable-resizable-image" 
+                            src="https://<%=bucket%>.s3.amazonaws.com/index/aboutme/<%= aboutMeImages[i].src %>" 
+                            alt="About Me Image <%= i + 1 %>">
+                        <% } %>
+
+                    <% } %>
+                </div>
         
-                <%- aboutMe[0].content %>
-
-                <% if (oldAboutMeFiles == 0) { %>
-
-                    <% for (let i = 0; i < aboutMe[0].aboutMeFiles; i++) { %>
-                        <img class="about-me-image img-fluid draggable-resizable-image" 
-                        src="https://<%BUCKETNAME%>.s3.amazonaws.com/index/aboutme/<%= aboutMeImages[i].src %>" 
-                        alt="About Me Image <%= i + 1 %>">
-                    <% } %>
-
-                <% } else { %>
-
-                    <% for (let i = (aboutMe[0].aboutMeFiles - oldAboutMeFiles) + 1; i < aboutMe[0].aboutMeFiles; i++) { %>
-                        <img class="about-me-image img-fluid draggable-resizable-image" 
-                        src="https://<%BUCKETNAME%>.s3.amazonaws.com/index/aboutme/<%= aboutMeImages[i].src %>" 
-                        alt="About Me Image <%= i + 1 %>">
-                    <% } %>
-
-                <% } %>
             </div>
-    
-        </div>
 
-        <!--Editing Tools/Hidden-->
-        <div id="dropdown" class="hidden" contenteditable="false">
-            <button id="resize-button" onclick="event.preventDefault()">Resize</button>
-            <button id="move-button" onclick="event.preventDefault()">Move</button>
-            <button id="delete-button" onclick="event.preventDefault()">Delete</button>
-        </div>
+            <!--Editing Tools/Hidden-->
+            <div id="dropdown" class="hidden" contenteditable="false">
+                <button id="resize-button" onclick="event.preventDefault()">Resize</button>
+                <button id="move-button" onclick="event.preventDefault()">Move</button>
+                <button id="delete-button" onclick="event.preventDefault()">Delete</button>
+            </div>
 
-        <input type="text" name="bannerContent" id="banner-content" hidden>
+            <input type="text" name="bannerContent" id="banner-content" hidden>
 
-        <input type="text" name="html" id="html-with-images" hidden>   
-        <input type="number" name="date" value="<%=aboutMe[0].uploadedAt%>" hidden>
+            <input type="text" name="html" id="html-with-images" hidden>   
+            <input type="number" name="date" value="<%=aboutMe[0].uploadedAt%>" hidden>
 
-        <!--Extra Input to Trigger AboutMe Database Update-->
-        <input type="number" name="aboutme" value="1" hidden>
+            <!--Extra Input to Trigger AboutMe Database Update-->
+            <input type="number" name="aboutme" value="1" hidden>
 
-        <button class="submit-edits">Submit Edits</button>
+            <button class="submit-edits">Submit Edits</button>
 
-        <% if (aboutMe[0].date != aboutMe[0].updatedDate) { %> 
-            <span class="update">Last updated on <%= timeConverter(aboutMe[0].updatedDate) %> </span>
-        <% } %>     
+            <% if (aboutMe[0].date != aboutMe[0].updatedDate) { %> 
+                <span class="update">Last updated on <%= timeConverter(aboutMe[0].updatedDate) %> </span>
+            <% } %>     
 
-    </form>
+        </form>
+
+    </div>
 
 <% } %>
 

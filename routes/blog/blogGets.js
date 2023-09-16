@@ -29,8 +29,9 @@ module.exports = app => {
           //I'll figure out a more elegant way to do this some other time...
           const sqlSearch = "SELECT * FROM post WHERE userID = ?;"
           const blogResult = mysql.format(sqlSearch, userID);
-      
-          connection.query (blogResult, (err, result) => {
+
+ 
+            connection.query (blogResult, (err, result) => {
               connection.release();
               if (err) throw (err);
       
@@ -38,6 +39,7 @@ module.exports = app => {
           
               res.render('publicBlogList', 
               { 
+                
                 blogs, 
                 
                 //Header
@@ -45,13 +47,14 @@ module.exports = app => {
                 isAuthenticated : req.isAuthenticated(),
                 
                 timeConverter 
-              })
+                
+              });
 
-            })
-
-        })
+            }); // End blog search 
+      
+        });
     
-    })
+    });
 
     //Separate Blog Posts
     app.get('/blog/:id', (req, res) => {

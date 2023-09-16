@@ -4,7 +4,7 @@
     <h1 class="d-flex justify-content-center">Gallery Editing</h1>
 </div>
 
-<div class="container-fluid">
+<div class="main container-fluid">
 
     <div class="photo-form"> 
         <form action="/photoUpload" method="POST" enctype="multipart/form-data">
@@ -33,7 +33,7 @@
                 <% for (let i = 0; i < gallery.length; i++) { %>
 
                     <div id="upload-photos" class="d-flex justify-content-center">
-                        <img class="img-fluid" src="https://<%BUCKETNAME%>.s3.amazonaws.com/galleryImages/<%=gallery[i].uploadedAt%>/<%=gallery[i].name%>" alt="<%= gallery[i].name %> " data-identifier="<%= gallery[i].uploadedAt + '-' + gallery[i].name %>">
+                        <img class="img-fluid shadow rounded" src="https://<%=bucket%>.s3.amazonaws.com/galleryImages/<%=gallery[i].uploadedAt%>/<%=gallery[i].name%>" alt="<%= gallery[i].name %> " data-identifier="<%= gallery[i].uploadedAt + '-' + gallery[i].name %>">
                         <input type="checkbox" class="checkbox" name="<%= gallery[i].uploadedAt %>" value="<%= gallery[i].name %>" hidden>
                     </div> 
 

@@ -7,7 +7,7 @@
     <title></title>
 
     <!--Icon-->
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
     <!--Dynamic Pathing For Bootstrap Modules-->
     <!--Include Functions looks for a number with /d+/ regex pattern & throws a boolean-->
@@ -29,14 +29,11 @@
         <link rel="stylesheet" href="/js/drag/drag.css">
     <% } %>
 
-    <!--Generalized Scripts-->
-    <script src="/js/all.js" defer></script>
-
 </head>
 
 <body>
 
-<nav class="navbar navbar-dark navbar-expand-lg sticky-top">
+<nav id="navbar" class="navbar navbar-dark navbar-expand-lg sticky-top" style="background-color: <%=user[0].navColor%>;">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,8 +92,28 @@
                     </div>  
                     <% } %>
                 </li>
-                
             </ul>
+
+            <% if (originalUrl.includes('editAboutMe')) { %>
+                <span class="nav-item">
+                    <label for="navbar-color" id="navbar-color-label" style="color:<%=getTextColor(user[0].navColor)%>">Select Color Theme</label>
+                    <input type="color" name="navbarColor" id="navbar-color" value="<%=user[0].navColor%>">
+                </span>
+            <% } %>
+
         </div>
     </div>
 </nav>
+
+<script>    
+    function hoverColorChange (element) {
+        element.addEventListener("mouseenter", () => {
+            element.style.filter = 'brightness(1.5)';
+        });
+        element.addEventListener("mouseleave", () => {
+            element.style.filter = 'brightness(1)';
+        });
+    }
+</script>
+<style id="choose-file-stylings">.chooseFile::file-selector-button{background-color:<%=user[0].navColor%>;color:<%=getTextColor(user[0].navColor)%>}</style>
+<style>.chooseFile::file-selector-button:hover{filter:brightness(1.5)}</style>

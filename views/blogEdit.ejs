@@ -6,7 +6,7 @@
 
 <% for (let i = blog.length - 1; i >= 0; i--) { %> <!--Render in Reverse Post Order-->
                             
-    <div class="editing-group container form-group">
+    <div class="main editing-group container form-group shadow rounded">
 
             <form action="/blogUpdate" method="POST" enctype="multipart/form-data" id="blog-update-form" class="editing-form">
 
@@ -81,9 +81,8 @@
     </div>        
     
     <br>
+
 <% } %>
-    
-</div>
 
 <!--Photo Editing Scripts-->
 <script src="/js/drag/drag.js"></script>

@@ -46,7 +46,7 @@ window.addEventListener('resize', positionTextarea);
 const capUpdate = document.querySelector('.captions-update');
 
 //False Caption, i.e. each visible CED
-const spans = document.querySelectorAll('.false-caption');
+const falseCaptions = document.querySelectorAll('.false-caption');
 
 //True Caption, i.e. each hidden textarea
 const captions = document.querySelectorAll('.gallery-caption');
@@ -54,8 +54,8 @@ const captions = document.querySelectorAll('.gallery-caption');
 //Give the Caption Divs Value of Textareas
 function update() {
     captions.forEach((caption, index) => {
-      const span = spans[index];
-      caption.value = span.innerHTML;
+      const falseCaption = falseCaptions[index];
+      caption.value = falseCaption.innerHTML;
     });
 }
 
