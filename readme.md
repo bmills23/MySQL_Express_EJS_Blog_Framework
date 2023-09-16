@@ -30,7 +30,7 @@ Set up a remote MySQL database.  I used Planetscale DB. Setup like this.
 
 Alternatively, copy and paste the scripts into your database console.
 
-CREATE TABLE user (
+`CREATE TABLE user (
     id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
     fName VARCHAR(45) NOT NULL,
     lname VARCHAR(45) NOT NULL,
@@ -39,9 +39,9 @@ CREATE TABLE user (
     website VARCHAR(255) NOT NULL,
     social json NOT NULL,
     navColor VARCHAR(7) NOT NULL DEFAULT '#FFFFFF'
-);
+);`
 
-CREATE TABLE post (
+`CREATE TABLE post (
     id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
     content LONGTEXT NOT NULL,
     trueContent LONGTEXT NOT NULL,
@@ -51,9 +51,9 @@ CREATE TABLE post (
     fileAmount TINYINT NOT NULL,
     featured TINYINT(1) NOT NULL,
     userID INT NOT NULL   
-);
+);`
 
-CREATE TABLE aboutme (
+`CREATE TABLE aboutme (
     content LONGTEXT NOT NULL,
     trueContent LONGTEXT NOT NULL,
     uploadedAt BIGINT NOT NULL PRIMARY KEY,
@@ -63,9 +63,9 @@ CREATE TABLE aboutme (
     bannerContent LONGTEXT NOT NULL,
     userID INT NOT NULL,
     aboutMeColor VARCHAR(7) NOT NULL
-);
+);`
 
-CREATE TABLE aboutMeImages (
+`CREATE TABLE aboutMeImages (
     ID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
     x INT NOT NULL,
     y INT NOT NULL,
@@ -73,9 +73,9 @@ CREATE TABLE aboutMeImages (
     uploadedAt BIGINT NOT NULL,
     imageType VARCHAR(100) NOT NULL,
     userID INT NOT NULL
-);
+);`
 
-CREATE TABLE blogImages (
+`CREATE TABLE blogImages (
     ID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
     x INT NOT NULL,
     y INT NOT NULL,
@@ -83,15 +83,15 @@ CREATE TABLE blogImages (
     uploadedAt BIGINT NOT NULL,
     imageType VARCHAR(100) NOT NULL,
     userID INT NOT NULL
-);
+);`
 
-CREATE TABLE gallery (
+`CREATE TABLE gallery (
     ID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
     uploadedAt BIGINT NOT NULL,
     name VARCHAR(1000) NOT NULL,
     caption VARCHAR(100) NOT NULL,
     userID INT NOT NULL
-);
+);`
 
 Step 2: 
 
@@ -113,12 +113,12 @@ Expose register.js and register.ejs in the Unused Folder.  Drag register.js to r
 
 Example of how to do that in your respective DB: 
 
-INSERT INTO user (social) VALUES (
+`INSERT INTO user (social) VALUES (
     '{
         "facebook": "https://www.facebook.com/yourpage",
         "linkedin": "https://www.linkedin.com/in/yourprofile",
         "instagram": "https://www.instagram.com/youraccount",
         "twitter": "https://twitter.com/yourhandle"
     }'
-); WHERE id = 1;
+); WHERE id = 1;`
 
