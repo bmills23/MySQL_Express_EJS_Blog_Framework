@@ -8,7 +8,7 @@ This framework assumes the use of an internet-based MySQL database (see /routes/
 
 This blog structure was setup with remote file storage using AWS.
 
-Step 1:
+## Step 1:
 
 Set up a remote MySQL database.  I used Planetscale DB. Setup like this.
 
@@ -93,7 +93,7 @@ Alternatively, copy and paste the scripts into your database console.
     userID INT NOT NULL
 );`
 
-Step 2: 
+## Step 2: 
 
 Set up a .env file in the root directory with variables SESSION_SECRET, DB_URL, PORT, REGION, ACCESS_KEY, SECRET_ACCESS_KEY, USER_REGION, IDENTITY_POOL_ID, BUCKET, and ID.
 
@@ -107,7 +107,7 @@ The bext six variables are keys from your AWS bucket.
 
 ID = the autoincrementing ID from the user database. We will create a user in the next step.
 
-Step 3: 
+## Step 3: 
 
 Expose register.js and register.ejs in the Unused Folder.  Drag register.js to routes and register.ejs to views folder and then redeploy the website. In your website, navigate to yourwebsitehere.com/register.  Fill out the form and submit.  You now have a partially complete user entry in your database.  Linkedin, facebook, instagram and twitter icons are implementable, but social media functionality is not implemented in the register form.  You will have to update the json in the user field manually if you want your social media to appear in the footer (navigate to the footer element in /views/partials/footer.ejs to see what I'm talking about). 
 
