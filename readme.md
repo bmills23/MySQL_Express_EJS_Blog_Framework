@@ -107,6 +107,8 @@ The next six variables are keys from your AWS bucket.
 
 ID = the autoincrementing ID from the user database. We will create a user in the next step.
 
+Obviously, removing the .env file will be a priority so this process can be reduced down so no programming experience is required.  
+
 ## Step 3: 
 
 Expose register.js and register.ejs in the Unused Folder.  Drag register.js to routes and register.ejs to views folder and then redeploy the website. In your website, navigate to yourwebsitehere.com/register.  Fill out the form and submit.  You now have a partially complete user entry in your database.  Linkedin, facebook, instagram and twitter icons are implementable, but social media functionality is not implemented in the register form.  You will have to update the json in the user field manually if you want your social media to appear in the footer (navigate to the footer element in /views/partials/footer.ejs to see what I'm talking about). 
