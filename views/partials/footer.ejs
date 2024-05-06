@@ -1,0 +1,122 @@
+<!--Need to Include this script to get color theming to work-->
+<script>
+
+    //Generalized Front-End Scripts
+
+    //title=h1 functionality
+
+    const title = document.querySelector('title');
+
+    const h1 = document.querySelector('h1');
+
+    title.innerHTML = h1.innerHTML;
+
+    //Alter nav-links text 
+    const navlinks = document.querySelectorAll('.nav-link');
+
+    /*
+        Iterate through the elements and filter out ones with additional classes since the nav-links we 
+        want only have one class, e.g. if length of array is greater than 1
+    */
+
+    //Convert navlinks nodelist into an array then filter down nav-links with only 1 class, e.g. the one's we want
+    const isolatedNavLinks = Array.from(navlinks).filter(element => {
+        return element.className.split(' ').length === 1;
+    });
+
+    const h2 = document.querySelectorAll('h2');
+
+    const h3 = document.querySelectorAll('h3');
+
+    const spans = document.querySelectorAll('span');
+
+    const labels = document.querySelectorAll('label');
+
+    //Convert NodeList to an array
+    const labelArray = Array.from(labels);
+
+    //Define the ID of the label in the header
+    const labelIdToRemove = 'navbar-color-label';
+
+    //Use the filter method to create a new array without the label
+    const filteredLabels = labelArray.filter(label => label.getAttribute('id') !== labelIdToRemove);
+
+    const buttons = document.querySelectorAll('button');
+
+    //This will always be true
+    isolatedNavLinks.forEach(link => {
+        link.style.color = `<%=getTextColor(user[0].navColor)%>`;
+    });
+
+    h1.style.color = `<%=user[0].navColor%>`;
+
+    if (buttons) {
+        buttons.forEach((button) => {
+
+            hoverColorChange(button);
+
+            button.style.backgroundColor = `<%=user[0].navColor%>`;
+            button.style.color = `<%=getTextColor(user[0].navColor)%>`;
+
+        });
+    };
+   
+    if (h2) {
+        h2.forEach(h2 => {
+            h2.style.color = `<%=user[0].navColor%>`;
+        });
+    };
+
+    if (h3) {
+        h3.forEach(h3 => {
+            h3.style.color = `<%=user[0].navColor%>`;
+        });
+    };
+
+    if (spans) {
+        spans.forEach(span => {
+            span.style.color = `<%=user[0].navColor%>`;
+        });
+    };
+    
+    if (filteredLabels) {
+        filteredLabels.forEach(label => {
+            label.style.color = `<%=user[0].navColor%>`;
+        });
+    };
+   
+</script>
+
+<div class="container-fluid">
+    <footer class="fixed-bottom d-flex flex-wrap justify-content-between align-items-center border-top">
+    
+        <div class="col-md-4 d-flex align-items-center">
+          <span class="text-muted">© <%= year %>, <%= user[0].fName %> <%= user[0].lName %></span>
+        </div>
+    
+        <div class="col-md-4 justify-content-end align-items-center d-flex">
+            <% if (socialData.linkedin) { %>
+                <a class="icon-wrapper" href="<%= socialData.linkedin %>"><img class="social-icon" style="background-image: url('/assets/social/linkedin.svg');"></a>
+            <% } %>
+            <% if (socialData.facebook) { %>
+                <a class="icon-wrapper" href="<%= socialData.facebook %>"><img class="social-icon"  style="background-image: url('/assets/social/facebook.svg');"></a>
+            <% } %>
+            <% if (socialData.instagram) { %>
+                <a class="icon-wrapper" href="<%= socialData.instagram %>"><img class="social-icon" style="background-image: url('/assets/social/instagram.svg');"></a>
+            <% } %>
+            <% if (socialData.twitter) { %>
+                <a class="icon-wrapper" href="<%= socialData.twitter %>"><img class="social-icon" style="background-image: url('/assets/social/twitter.svg');"></a>
+            <% } %>
+        </div>
+    
+    </footer>
+</div>
+
+<!--Google Font CDN-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+
+</body>
+
+</html>

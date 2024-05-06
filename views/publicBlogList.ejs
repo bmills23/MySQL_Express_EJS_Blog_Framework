@@ -1,0 +1,30 @@
+<%-include('partials/header')%>
+
+<div class="title container">
+    <% if (isAuthenticated) { %> 
+    <h1 class="d-flex justify-content-center">Public Blogs</h1>
+    <% } else { %>
+    <h1 class="d-flex justify-content-center"><%= `${user[0].fName}'s Blogs` %></h1>
+    <% } %> 
+</div>
+
+
+<div class="main">
+    <% for (let i = blogs.length - 1; i >= 0; i--) { %>
+        <% if (blogs[i].content != '') { %> 
+            <div class="blog-listing">
+                <div class="container">
+                    <a href="/blog/<%= blogs[i].id %>"><h2 class="blog-title"><%= blogs[i].title %></h2></a>
+                </div>
+                <div class="container">
+                    <span class="post-date">First Posted on <%= timeConverter(blogs[i].uploadedAt) %> </span>
+                    <% if (blogs[i].uploadedAt != blogs[i].updatedDate) { %> 
+                    <span class="update">Last updated on <%= timeConverter(blogs[i].updatedDate) %> </span>
+                    <% } %> 
+                </div>
+            </div>
+        <% } %>
+    <% } %> 
+</div>
+
+<%-include('partials/footer')%>

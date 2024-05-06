@@ -1,0 +1,70 @@
+.draggable-resizable-image:hover {
+    cursor: pointer;
+}
+
+.draggable-resizable-image {
+    align-self: center;
+    float: left;
+}
+
+#editable {
+    padding-bottom: 5rem;
+    overflow: auto;
+    border: 2px solid black;
+}
+
+#dropdown {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+}
+
+#margin-dropdown {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+}
+
+#margin-slider-top, #margin-slider-bottom, #margin-slider-left, #margin-slider-right {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+}
+
+#margin-slider-bottom {
+    transform: rotate(-90deg)
+}
+
+#margin-slider-top {
+    transform: rotate(90deg);
+}
+
+#resize-button, #move-button, #delete-button {
+    max-width: 200px;
+    font-family: 'Roboto Slab', serif;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    background-color: #4B5896;
+}
+
+#resize-button:hover, #move-button:hover {
+    background-color: #7882B1;
+}
+
+.index-image:hover {
+    cursor: grab;
+    transform: scale(1.1);
+}
+
+.index-image:active {
+    cursor: grabbing;
+}
+
+.box {
+    max-height: 200px; /* Adjust the desired height for the images */
+    overflow: hidden;
+}

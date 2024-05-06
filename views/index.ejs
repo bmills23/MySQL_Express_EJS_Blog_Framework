@@ -1,0 +1,63 @@
+<%- include('partials/header') %> 
+ 
+<div class="title container">
+    <h1 class="d-flex justify-content-center">
+    <% if (!isAuthenticated) { %>     
+    <%= `${user[0].fName} ${user[0].lName}` %>
+    <% } else { %>
+    <%= `Welcome, ${user[0].fName}!` %>
+    <% } %> 
+    </h1>
+</div>
+
+<div class="main container-fluid index-page">
+
+    <div class="index-images shadow rounded">
+
+        <%-aboutMe[0].bannerContent %>
+        
+    </div>
+
+    <div class="about-me container shadow rounded" style="background-color: <%= aboutMe[0].aboutMeColor%>;">
+
+        <%- aboutMe[0].content %>
+
+    </div>
+
+    <div class="featured-blogs container shadow rounded">
+        <h2>Featured Blogs</h2>
+        <div class="row mx-auto justify-content-center">
+            <% for (let i = 0; i < blogs.length; i++) { %> 
+                <% if (blogs[i].featured && blogs[i].fileAmount > 0) { %> 
+                    <div class="img">
+                        <h3 class="index-title"><%= blogs[i].title %></h3>
+                        <a href="/blog/<%= blogs[i].id %>"><img class="img-fluid feature-photo shadow rounded" src="https://<%=bucket%>.s3.amazonaws.com/blogImages/<%=blogs[i].uploadedAt%>/<%=images[i].src%>" alt="Featured Blog Photo"></a>
+                    </div>
+                <% } else if (blogs[i].featured && blogs[i].fileAmount === 0) %>
+                    <div class="img">
+                        <h3 class="index-title"><%= blogs[i].title %></h3>
+                        <a href="/blog/<%= blogs[i].id %>">
+                            <!--If no files in body of blog, a feature photo will be pulled from five stock images-->
+                            <img class="img-fluid feature-photo shadow rounded"
+                            src="/assets/blog<%= Math.floor(Math.random() * 5) + 1 %>.jpg"
+                            alt="Featured Blog Photo">
+                        </a>
+                    </div>
+                <% } %>
+            <% } %> 
+        </div>
+    </div>
+
+    <div class="about-me-date container">
+        <% if (aboutMe[0].uploadedAt != aboutMe[0].updatedDate) { %> 
+            <span class="update">Home Page Last Updated On <%= timeConverter(aboutMe[0].updatedDate) %></span>
+        <% } %> 
+    </div>
+
+</div>
+
+<!--Image + Editing Scripts-->
+<script src="/js/images.js"></script>
+<script src="/js/gallery.js"></script>
+
+<%- include('partials/footer') %> 

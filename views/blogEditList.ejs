@@ -1,0 +1,75 @@
+<%-include('partials/header')%>
+
+<div class="title container">
+    <h1 class="d-flex justify-content-center">Select Blog to Edit</h1>
+</div>
+
+<div class="main container">
+    <% for (let i = blogs.length - 1; i >= 0; i--) { %>
+        <% if (blogs[i].content != '') { %> 
+            <div class="blog-listing"> 
+    
+                <!--Db dependent stylings for border of blog-title-container-->
+                <% if (blogs[i].featured) { %>
+    
+                <style>
+                    .blog-title-container<%=i%> {
+                        border: 4px solid #8b4d4d;
+                        margin-bottom: 2rem;
+                    }
+                </style>
+    
+                <div class="container">
+                    <a href="/blogEdit/<%= blogs[i].id %>"><h2 class="blog-title"><%= blogs[i].title %></h2></a>
+                    <!--Form For Blog Featuring-->
+                    <form action="/blogFeature?_method=PUT" method="POST">
+                        <input type="text" name="date" value="<%=blogs[i].uploadedAt%>" hidden>
+                        <% if (!blogs[i].featured) { %> 
+                            <button class="feature-button">Feature?</button>
+                        <% } else { %>
+                            <button class="unfeature-button">Unfeature?</button>
+                        <% } %> 
+                    </form>
+                </div>
+                <div class="container blog-title-container<%=i%> shadow rounded">
+                    <span class="post-date">First Posted on <%= timeConverter(blogs[i].uploadedAt) %> </span>
+                    <% if (blogs[i].uploadedAt != blogs[i].updatedDate) { %> 
+                    <span class="update">Last updated on <%= timeConverter(blogs[i].updatedDate) %> </span>
+                    <% } %> 
+                </div>
+    
+                <% } else { %>
+    
+                <style>
+                    .blog-title-container<%=i%> {
+                        border: 4px solid #4d8b66;
+                    }
+                </style>
+    
+                <div class="container">
+                    <a href="/blogEdit/<%= blogs[i].id %>"><h2 class="blog-title"><%= blogs[i].title %></h2></a>
+                    <!--Form For Blog Featuring-->
+                    <form action="/blogFeature?_method=PUT" method="POST">
+                        <input type="text" name="date" value="<%=blogs[i].uploadedAt%>" hidden>
+                        <% if (!blogs[i].featured) { %> 
+                            <button class="feature-button">Feature?</button>
+                        <% } else { %>
+                            <button class="unfeature-button">Unfeature?</button>
+                        <% } %> 
+                    </form>
+                </div>
+                <div class="container blog-title-container<%=i%> shadow rounded">
+                    <span class="post-date">First Posted on <%= timeConverter(blogs[i].uploadedAt) %> </span>
+                    <% if (blogs[i].uploadedAt != blogs[i].updatedDate) { %> 
+                    <span class="update">Last updated on <%= timeConverter(blogs[i].updatedDate) %> </span>
+                    <% } %> 
+                </div>
+    
+                <% } %>
+    
+            </div>
+        <% } %>
+    <% } %>
+</div>
+
+<%-include('partials/footer')%>

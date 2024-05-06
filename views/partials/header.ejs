@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+
+    <!--Icon-->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <!--Dynamic Pathing For Bootstrap Modules-->
+    <!--Include Functions looks for a number with /d+/ regex pattern & throws a boolean-->
+    <!--Note, includes argument must be a string-->
+
+    <% if (/\d+/.test(originalUrl.toString())) { %>
+        <link rel="stylesheet" href="../css/bootstrap.min.css">
+        <script src="../js/bootstrap.bundle.js"></script>
+    <% } else { %>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <script src="./js/bootstrap.bundle.js"></script>
+    <% } %>
+
+    <!--Styling-->
+    <link class="stylesheet" rel="stylesheet" href="/app.css">
+
+    <!--Deals with Pages that Require Dragging Script-->
+    <% if (originalUrl.includes('blogEdit') || originalUrl.includes('blogStep2') || originalUrl.includes('editAboutMe')) { %>
+        <link rel="stylesheet" href="/js/drag/drag.css">
+    <% } %>
+
+</head>
+
+<body>
+
+<nav id="navbar" class="navbar navbar-dark navbar-expand-lg sticky-top" style="background-color: <%=user[0].navColor%>;">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/">Home</a>
+                </li>  
+                <div class="nav-item">
+                      <a class="nav-link" href="/gallery">Photo Gallery</a></li>
+                </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="/blogs">Blogs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link user-only" href="/editAboutMe"
+                    <% if (!isAuthenticated) { %>
+                    <%= "hidden" %>
+                    <% } %> 
+                    >Edit Index Page</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link user-only" href="/editGallery"
+                    <% if (!isAuthenticated) { %>
+                    <%= "hidden" %>
+                    <% } %> 
+                    >Edit Gallery</a>
+                </li>
+                <li class="nav-item">
+                    <a id="userOnly" class="nav-link user-only" href="/blogInput" 
+                    <% if (!isAuthenticated) { %>
+                    <%= "hidden" %>
+                    <% } %>  
+                    >Write New Blog</a>
+                </li>
+                <li class="nav-item">
+                    <a id="userOnly" class="nav-link user-only" href="/blogEditList" 
+                    <% if (!isAuthenticated) { %>
+                    <%= "hidden" %>
+                    <% } %>  
+                    >Edit Individual Blogs</a>
+                </li>
+                <li class="nav-item align-items-end">
+                    <% if (isAuthenticated) { %>
+                    <form action="/logout?_method=DELETE" method="POST" class="form-group text-center align-items-center justify-content-center">
+                        <button type="submit" class="btn login">
+                            Log Out
+                        </button>
+                    </form>  
+                    <% } else { %>
+                    <div class="form-group text-center align-items-center justify-content-center">
+                        <a class="nav-link" href="/login">Log In</a>
+                    </div>  
+                    <% } %>
+                </li>
+            </ul>
+
+            <% if (originalUrl.includes('editAboutMe')) { %>
+                <span class="nav-item">
+                    <label for="navbar-color" id="navbar-color-label" style="color:<%=getTextColor(user[0].navColor)%>">Select Color Theme</label>
+                    <input type="color" name="navbarColor" id="navbar-color" value="<%=user[0].navColor%>">
+                </span>
+            <% } %>
+
+        </div>
+    </div>
+</nav>
+
+<script>    
+    function hoverColorChange (element) {
+        element.addEventListener("mouseenter", () => {
+            element.style.filter = 'brightness(1.5)';
+        });
+        element.addEventListener("mouseleave", () => {
+            element.style.filter = 'brightness(1)';
+        });
+    }
+</script>
+<style id="choose-file-stylings">.chooseFile::file-selector-button{background-color:<%=user[0].navColor%>;color:<%=getTextColor(user[0].navColor)%>}</style>
+<style>.chooseFile::file-selector-button:hover{filter:brightness(1.5)}</style>

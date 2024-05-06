@@ -1,0 +1,35 @@
+<%- include('./partials/header.ejs') %>
+
+<div class="title container">
+    <h1 class="d-flex justify-content-center"><%= blog[0].title %></h1>
+</div>
+
+<% if (blog[0].trueContent != '') { %> 
+    <div class="main container shadow rounded">  
+
+        <%- blog[0].trueContent %>
+       
+    </div>
+    <div class="container">
+        <span class="post-date">First Posted on <%= timeConverter(blog[0].uploadedAt) %> </span>
+        <% if (blog[0].uploadedAt != blog[0].updatedDate) { %> 
+        <span class="update">Last updated on <%= timeConverter(blog[0].updatedDate) %> </span>
+        <% } %>
+    </div> 
+
+<% } else { %> 
+    <div class="main container shadow rounded">  
+
+        <%- blog[0].content %>
+    
+    </div>
+    <div class="container">
+        <span class="post-date">First Posted on <%= timeConverter(blog[0].uploadedAt) %> </span>
+        <% if (blog[0].uploadedAt != blog[0].updatedDate) { %> 
+        <span class="update">Last updated on <%= timeConverter(blog[0].updatedDate) %> </span>
+        <% } %>
+    </div>
+     
+<% } %>
+
+<%- include('./partials/footer.ejs') %>

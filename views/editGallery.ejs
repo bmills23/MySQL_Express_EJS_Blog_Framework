@@ -1,0 +1,86 @@
+<%-include('partials/header') %> 
+
+<div class="container">
+    <h1 class="d-flex justify-content-center">Gallery Editing</h1>
+</div>
+
+<div class="main container-fluid">
+
+    <div class="photo-form"> 
+        <form action="/photoUpload" method="POST" enctype="multipart/form-data">
+            <input id="date" type="text" name="newDate" hidden>
+            <div id="upload-photos" class="row justify-content-center">
+                <label for="files">Upload Photos for Gallery</label>
+                <input class="form-control-sm chooseFile" type="file" name="galleryImages" multiple>
+            </div>
+            <button class="submit-blog">Render New Photos</button>
+        </form>
+    </div>
+   
+    <button class="delete" id="delete">Click to Activate Delete Checkboxes</button>
+    <button form="photo-delete" class="delete" id="true-delete" hidden>Click When Photos Selected</button>    
+    <button form="photo-update" class="captions-update">Update Captions</button>
+
+    <div class="container">
+
+        <div class="row">
+
+            <form class="col-8" id="photo-delete" action="/photoDelete?_method=DELETE" method="POST">     
+
+                <!--Database stores subdirectories in the same order as the bucket
+                but images are in the opposite order-->
+
+                <% for (let i = 0; i < gallery.length; i++) { %>
+
+                    <div id="upload-photos" class="d-flex justify-content-center">
+                        <img class="img-fluid shadow rounded" src="https://<%=bucket%>.s3.amazonaws.com/galleryImages/<%=gallery[i].uploadedAt%>/<%=gallery[i].name%>" alt="<%= gallery[i].name %> " data-identifier="<%= gallery[i].uploadedAt + '-' + gallery[i].name %>">
+                        <input type="checkbox" class="checkbox" name="<%= gallery[i].uploadedAt %>" value="<%= gallery[i].name %>" hidden>
+                    </div> 
+
+                <% } %> 
+
+            </form>
+
+            <form class="col-4" id="photo-update" action="/photoUpdate?_method=PUT" method="POST">
+
+                <% for (let i = 0; i < gallery.length; i++) { %>
+
+                    <% if (gallery[i].caption === '') { %>
+
+                        <div class='caption-div' data-identifier="<%= gallery[i].uploadedAt + '-' + gallery[i].name %>" >
+                            <span contenteditable="false">Input Caption Here:&nbsp;</span>
+                            <span class='false-caption' contenteditable="true"></span>
+                        </div>
+        
+                    <% } else { %>
+
+                        <div class='caption-div' data-identifier="<%= gallery[i].uploadedAt + '-' + gallery[i].name %>" >
+                            <span contenteditable="false">Caption <%= i + 1 %>:&nbsp;</span>
+                            <span class='false-caption' contenteditable="true"><%- gallery[i].caption %></span>
+                        </div>
+
+                    <% } %>
+
+                    <!--Inputs-->
+                    <textarea class="gallery-caption" type="text" name="caption<%= i %>" maxlength="1000" hidden></textarea> 
+                    <input type="text" name="date<%= i %>" value="<%= gallery[i].uploadedAt %>" hidden>
+                    <input type="text" name="name<%= i %>" value="<%= gallery[i].name %>" hidden> 
+
+                <% } %> 
+
+            </form>
+
+        </div>
+    
+    </div>
+ 
+</div>
+
+<!--Editing Scripts-->
+<script src="/js/images.js"></script>
+
+<!--Gallery Specific Scripts-->
+<script src="/js/gallery.js"></script>
+<script src="/js/galleryEdit.js"></script>
+
+<%- include('partials/footer') %> 

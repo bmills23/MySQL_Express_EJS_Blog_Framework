@@ -1,0 +1,97 @@
+<%- include('./partials/header.ejs') %>
+
+<div class="container">
+    <h1 class="d-flex justify-content-center"><%= blog[0].title %></h1>
+</div>
+
+<% for (let i = blog.length - 1; i >= 0; i--) { %> <!--Render in Reverse Post Order-->
+                            
+    <div class="main editing-group container form-group shadow rounded">
+
+            <form action="/blogUpdate" method="POST" enctype="multipart/form-data" id="blog-update-form" class="editing-form">
+
+                <input id="date" type="text" name="newDate" hidden>
+                <input type="text" name="date" value="<%= blog[0].uploadedAt %>" hidden>
+
+                <label for="title">Input New Title Here</label>
+                <input type="text" name="title" value="<%= blog[0].title %>">
+
+                <label for="blogInput">Edit Blog #<%= blog[0].id %></label>
+                
+                <!--ID of editable is related to photoEdits.js-->
+                <div id="editable" class="form-control content-editable" contenteditable="true">      
+
+                    <% if (!blog[0].trueContent) { %>
+                
+                        <%- blog[0].content %>
+                    
+                    <% } else { %>
+
+                        <%- blog[0].trueContent %>
+                    
+                    <% } %>
+
+                </div>
+
+                <!--Inputs for BlogImages Database-->          
+                <% for (let j = 1; j <= blog[0].fileAmount; j++) { %> 
+
+                    <div id="image_input_<%=j%>">
+                        <input id="x_<%=j%>" type="text" name="x_<%=j%>" hidden>
+                        <input id="y_<%=j%>" type="number" name="y_<%=j%>" hidden>
+                        <input id="src_<%=j%>" type="text" name="src_<%=j%>" hidden>
+                    </div>
+                    
+                <% } %>  
+           
+                <!--Editing Tools/Hidden-->
+                <div id="dropdown" class="hidden" contenteditable="false">
+                    <button id="resize-button" onclick="event.preventDefault()">Resize</button>
+                    <button id="move-button" onclick="event.preventDefault()">Move</button>
+                    <button id="delete-button" onclick="event.preventDefault()">Delete</button>
+                </div>
+
+                <textarea class="form-control hidden-textarea" name="blogInput" hidden></textarea>
+                <textarea id="html-with-images" name="trueContent" hidden></textarea>
+
+                <div id="upload-photos" class="row justify-content-center">
+                    <label for="files">Upload Photos for Blog</label>
+                    <input class="form-control-sm chooseFile" id="chooseFile" type="file" name="blogImages" multiple>
+                </div>
+                
+                <button class="submit-edits" id="old-edits">Submit Text & Photo Edits</button>
+                <!--Evaluate the req.body.oldEdits as truthy in backend-->
+                <input type="number" name="oldEdits" id="old-edits-input" hidden>
+
+                <button class="submit-edits hidden" id="new-edits">Click to Advance to Photo Editing for New Images</button>
+                <!--Evaluate the req.body.newEdits as truthy in backend-->
+                <input type="number" name="newEdits" id="new-edits-input" hidden>
+        
+        </form>
+
+        <form onsubmit="return confirm('Are you sure you want to delete the post?')" action="/blogDelete?_method=DELETE" method="POST">
+
+            <div class="form-group">
+                <input type="text" name="date" value="<%= blog[0].uploadedAt %>" hidden>
+                <button class="delete-post">Delete Post?</button>
+            </div>
+
+        </form>
+        
+    </div>        
+    
+    <br>
+
+<% } %>
+
+<!--Photo Editing Scripts-->
+<script src="/js/drag/drag.js"></script>
+
+<!--This script is for BlogImages Database-->
+<script src="/js/photoEdits.js"></script>
+
+<!--Image + Editing Scripts-->
+<script src="/js/blogEdit.js"></script>
+<script src="/js/images.js"></script>
+
+<%- include('./partials/footer.ejs') %>

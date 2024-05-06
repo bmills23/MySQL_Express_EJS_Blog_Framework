@@ -1,0 +1,192 @@
+<%- include('./partials/header.ejs') %>
+
+<div class="title container">
+
+    <h1 class="d-flex justify-content-center">Photo Editing</h1>
+
+</div>
+
+<% if (typeof indexPhotos === 'undefined') { %>
+
+    <!--Will Always Render Newest Blog First-->
+    <% let unixArr = [] %> 
+    <% for (let i = 0; i < blog.length; i++) { %> 
+    <% unixArr.push(blog[i].updatedDate) %>
+    <% } %>
+    <% const maxDate = Math.max(...unixArr) %> 
+    <% let i = unixArr.findIndex(value => value === maxDate); %>
+
+    <div class="main editing-group form-group container-fluid shadow rounded">
+
+        <h2><%= blog[i].title %></h2>
+
+        <form 
+
+            action="/blogInput2"
+      
+            method="POST"
+
+            onsubmit="return confirm('Are you sure you want to submit these photo edits?')"
+            
+            class="editing-form auto-submit"
+
+            ><!--End of Form Opening Tag-->
+            
+            <!--Editable for drag.js, content-editable for blogStep2.js-->
+            <!--Render only blog content, not true content due to image uploading scheme-->
+            
+            <div class="form-control content-editable" id="editable" contenteditable="true">
+
+                <% if (!blog[i].trueContent) { %>
+                    <div>><%- blog[i].content %></div>
+                <% } else { %>
+                    <div><%- blog[i].trueContent %></div>
+                <% } %>
+
+                <% if (newBlog) { %>
+                    <% for (let j = 1; j <= blog[i].fileAmount; j++) { %> 
+                        <img id="image_<%=j%>" class="img-fluid draggable-resizable-image" 
+                        src="https://<%=bucket%>.s3.amazonaws.com/blogImages/<%=blog[i].uploadedAt%>/<%=images[j-1].src%>"
+                        alt="Blog Photo <%= j %>" onclick="event.stopPropagation()">
+
+                        <div id="image_input_<%=j%>">
+                            <input id="x_<%=j%>" type="text" name="x_<%=j%>" hidden>
+                            <input id="y_<%=j%>" type="number" name="y_<%=j%>" hidden>
+                            <input id="src_<%=j%>" type="text" name="src_<%=j%>" hidden>
+                        </div>
+                    <% } %>
+                <% } else { %>
+                    <% for (let j = (blog[i].fileAmount - newFiles); j < (blog[i].fileAmount); j++) { %> 
+                        <img id="image_<%=j%>" class="img-fluid draggable-resizable-image" 
+                        src="https://<%=bucket%>.s3.amazonaws.com/blogImages/<%=blog[i].uploadedAt%>/<%=images[j].src%>"
+                         alt="Blog Photo <%= j %>" onclick="event.stopPropagation()">
+                    
+                        <div id="image_input_<%=j%>">
+                            <input id="x_<%=j%>" type="text" name="x_<%=j%>" hidden>
+                            <input id="y_<%=j%>" type="number" name="y_<%=j%>" hidden>
+                            <input id="src_<%=j%>" type="text" name="src_<%=j%>" hidden>
+                        </div>
+                    <% } %>
+                <% } %>
+
+            </div>
+
+            <!--
+                Explanation for CED : If trueContent is empty, it's a new blog.  
+                If req.query.newBlog = true, will render all images just uploaded;
+                else the old images are a part of trueContent, so new images just
+                uploaded will render in the usual spot
+            -->
+
+            <div id="dropdown" class="hidden" contenteditable="false">
+                <button id="resize-button" onclick="event.preventDefault()">Resize</button>
+                <button id="move-button" onclick="event.preventDefault()">Move</button>
+                <button id="delete-button" onclick="event.preventDefault()">Delete</button>
+            </div>
+
+            <input type="text" name="html" id="html-with-images" hidden>       
+            <input type="text" name="content" id="html-without-images" hidden>          
+            <input type="text" name="date" value="<%=blog[i].uploadedAt%>" hidden>
+            <input type="text" name="newDate" id="date" hidden>
+
+            <button class="submit-edits" onclick="submitForms()">Submit Edits</button>
+
+        </form>
+
+        <span class="post-date">First Posted on <%= timeConverter(blog[i].uploadedAt) %> </span>
+
+        <br>
+        <% if (blog[i].uploadedAt != blog[i].updatedDate) { %> 
+            <span class="update">Last updated on <%= timeConverter(blog[i].updatedDate) %> </span>
+        <% } %> 
+    </div>
+
+<% } else { %>
+
+    <div class="main editing-group form-group container-fluid">
+
+        <form class="editing-form auto-submit" action="/blogInput2" method="POST" onsubmit="return confirm('Are you sure you want to submit these photo edits?')">
+
+            <div class="container index-page">
+
+                <div class="index-images">
+                    <% for (let i = 0; i < aboutMe[0].fileAmount; i++) { %>
+                        <img class="index-image"
+                        id="banner-image-<%= i + 1 %>"
+                        src="https://<%=bucket%>.s3.amazonaws.com/index/banner/<%= bannerImages[i].src %>"
+                        alt="Banner Image <%= i + 1 %>"
+                        style="width: 100%/<%= aboutMe[0].fileAmount %>;">
+                    <% } %>
+                </div>
+
+                <!--Trash Can Icon-->
+                <div id="trash-can" class="hidden"></div>
+
+                <div class="about-me container-fluid content-editable" id="editable">
+            
+                    <%- aboutMe[0].content %>
+
+                    <% if (oldAboutMeFiles == 0) { %>
+
+                        <% for (let i = 0; i < aboutMe[0].aboutMeFiles; i++) { %>
+                            <img class="about-me-image img-fluid draggable-resizable-image" 
+                            src="https://<%=bucket%>.s3.amazonaws.com/index/aboutme/<%= aboutMeImages[i].src %>" 
+                            alt="About Me Image <%= i + 1 %>">
+                        <% } %>
+
+                    <% } else { %>
+
+                        <% for (let i = (aboutMe[0].aboutMeFiles - oldAboutMeFiles) + 1; i < aboutMe[0].aboutMeFiles; i++) { %>
+                            <img class="about-me-image img-fluid draggable-resizable-image" 
+                            src="https://<%=bucket%>.s3.amazonaws.com/index/aboutme/<%= aboutMeImages[i].src %>" 
+                            alt="About Me Image <%= i + 1 %>">
+                        <% } %>
+
+                    <% } %>
+                </div>
+        
+            </div>
+
+            <!--Editing Tools/Hidden-->
+            <div id="dropdown" class="hidden" contenteditable="false">
+                <button id="resize-button" onclick="event.preventDefault()">Resize</button>
+                <button id="move-button" onclick="event.preventDefault()">Move</button>
+                <button id="delete-button" onclick="event.preventDefault()">Delete</button>
+            </div>
+
+            <input type="text" name="bannerContent" id="banner-content" hidden>
+
+            <input type="text" name="html" id="html-with-images" hidden>   
+            <input type="number" name="date" value="<%=aboutMe[0].uploadedAt%>" hidden>
+
+            <!--Extra Input to Trigger AboutMe Database Update-->
+            <input type="number" name="aboutme" value="1" hidden>
+
+            <button class="submit-edits">Submit Edits</button>
+
+            <% if (aboutMe[0].date != aboutMe[0].updatedDate) { %> 
+                <span class="update">Last updated on <%= timeConverter(aboutMe[0].updatedDate) %> </span>
+            <% } %>     
+
+        </form>
+
+    </div>
+
+<% } %>
+
+<!--Photo Editing Scripts-->
+<script src="/js/drag/drag.js"></script>
+
+<!--IndexPhotos indicate dragndrop-->
+<% if (typeof indexPhotos !== 'undefined') { %>
+    <script src="/js/dragndrop.js"></script>
+<% } %>
+
+<!--This script is for BlogImages Database-->
+<script src="/js/photoEdits.js"></script>
+
+<!--Image + Editing Scripts-->
+<script src="/js/images.js"></script>
+<script src="/js/blogStep2.js"></script>
+
+<%-include('./partials/footer')%>

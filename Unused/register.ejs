@@ -1,0 +1,38 @@
+<%- include('partials/header') %>
+
+<div id="control">
+    <div id="box" class="align-items-center justify-content-center">
+        <h1 class="text-center">Account Registration</h1>
+        <div id="error-message" hidden></div>
+        <form action="/register" method="POST" class="form-group text-center">
+            <div class="mb-2">
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" id="first-name" name="firstName">
+            </div>
+            <div class="mb-2">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input type="text" id="last-name" name="lastName">
+            </div>
+            <div class="mb-2">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" name="email">
+            </div>
+            <div class="mb-2">
+                <label for="password" class="form-label">New Password</label>
+                <input type="password" id="password" name="password">
+            </div>
+            <div class="mb-2">
+                <label for="passwordConfirm" class="form-label">Verify Password</label>
+                <input type="password" id="password-confirm">
+            </div>
+
+            <input type="text" name="website" value="" id="website" hidden>
+
+            <button id="submit-register" type="submit" class="btn">Submit</button>
+        </form>
+    </div>
+</div>
+
+<script src="/js/register.js"></script>
+
+<%- include('partials/footer') %>
